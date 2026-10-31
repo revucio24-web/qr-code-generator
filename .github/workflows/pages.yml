@@ -27,9 +27,11 @@ jobs:
       - name: Stage site files
         run: |
           mkdir -p _site
-          cp index.html _site/
-          cp README.md _site/ 2>/dev/null || true
+          # alle Dateien im Wurzelverzeichnis (HTML, JS, CSS, Bilder, README)
+          find . -maxdepth 1 -type f -exec cp {} _site/ \;
           touch _site/.nojekyll
+          echo "--- ausgelieferte Dateien ---"
+          ls -la _site
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
