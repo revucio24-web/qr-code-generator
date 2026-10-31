@@ -280,10 +280,10 @@
         button:active:not(:disabled) { transform: translateY(0); }
         button:disabled { opacity: 0.6; cursor: not-allowed; }
 
-        .download-btn { background: #28a745; }
+        .download-btn { background: #1e7e34; }
         .download-btn:hover:not(:disabled) { box-shadow: 0 10px 20px rgba(40, 167, 69, 0.4); }
 
-        .svg-btn { background: #0d6efd; }
+        .svg-btn { background: #0b5ed7; }
         .svg-btn:hover:not(:disabled) { box-shadow: 0 10px 20px rgba(13, 110, 253, 0.4); }
 
         .secondary-btn { background: #6c757d; }
@@ -397,6 +397,55 @@
                 margin-top: 2mm;
             }
         }
+
+        /* ===== LOGO DROPZONE ===== */
+        .dropzone {
+            margin-top: 10px;
+            padding: 18px 14px;
+            border: 2px dashed #cfd3da;
+            border-radius: 10px;
+            text-align: center;
+            color: #5f6670;
+            font-size: 13px;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s, color 0.2s;
+            background: #fafbfc;
+        }
+
+        .dropzone strong {
+            display: block;
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 2px;
+        }
+
+        .dropzone:hover {
+            border-color: #4c5fd7;
+            color: #4c5fd7;
+        }
+
+        .dropzone.dragover {
+            border-color: #4c5fd7;
+            background: #eef1ff;
+            color: #4c5fd7;
+        }
+
+        /* ===== LIVE-WARNUNG ===== */
+        .live-warning {
+            margin-top: 12px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            background: #fff4e5;
+            color: #8a4b00;
+            font-size: 13px;
+            text-align: left;
+            display: none;
+        }
+
+        .live-warning.show { display: block; }
+
+        .live-warning ul { margin: 6px 0 0 18px; }
+        .live-warning li { margin-bottom: 3px; }
 
         /* ===== LOGO ===== */
         .logo-preview {
@@ -828,6 +877,10 @@
             <div class="form-group">
                 <label for="logoFile">Logo hochladen:</label>
                 <input type="file" id="logoFile" accept="image/*" />
+                <div class="dropzone" id="logoDrop" role="button" tabindex="0" aria-label="Logo hierher ziehen oder auswählen">
+                    <strong>Logo hierher ziehen</strong>
+                    oder klicken zum Auswählen (PNG/JPG, max. 5 MB)
+                </div>
                 <div class="logo-preview" id="logoPreview">
                     <button class="remove-logo" id="removeLogo" onclick="removeLogo()" title="Logo entfernen">✕</button>
                 </div>
@@ -900,6 +953,7 @@
                 </select>
             </div>
             <div class="hint" id="resHint" style="display:none; margin-top:10px;"></div>
+            <div class="live-warning" id="liveWarning"></div>
         </div>
 
         <div class="info">
@@ -1387,14 +1441,105 @@
             if (!lastRender) return false;
             const o = readOptions();
             try {
-                const qr = buildQR(lastRender.text, lastRender.ecLevel);
+                const qr = buildQR(lastRender.text, currentEC());
                 drawToCanvas(qr, o);
                 lastSVG = buildSVG(qr, o);
                 updateResultChrome(o);
+                updateLiveWarning(o);
                 return true;
             } catch (e) {
                 return false;
             }
+        }
+
+        // Die Fehlerkorrektur ist eine Design-Einstellung: sie muss bei jedem
+        // Rendern (Vorschau, Download, Druck, Selbsttest) aktuell gelten.
+        function currentEC() {
+            return document.getElementById('errorCorrection').value;
+        }
+
+        /* ================= Live-Vorschau (still, gedrosselt) ================= */
+
+        let liveTimer = null;
+
+        // Design-Änderungen lösen eine stille Neuzeichnung aus – ohne Dialoge,
+        // damit man beim Ziehen eines Sliders nicht zugeklickt wird.
+        const LIVE_IDS = [
+            'darkColor', 'lightColor', 'cornerColor', 'cornerTL', 'cornerTR', 'cornerBL',
+            'size', 'moduleStyle', 'cornerEnabled', 'cornerSplit', 'transparentBg',
+            'logoSize', 'logoBorder', 'logoShadow', 'exportSize', 'errorCorrection'
+        ];
+
+        function scheduleLivePreview() {
+            if (!lastRender || isGenerating) return;
+            clearTimeout(liveTimer);
+            liveTimer = setTimeout(livePreview, 150);
+        }
+
+        function livePreview() {
+            if (!lastRender || isGenerating) return;
+            const o = readOptions();
+            try {
+                const qr = buildQR(lastRender.text, currentEC());
+                paintCanvas(document.getElementById('qrCanvas'), qr, o, o.size);
+                lastSVG = buildSVG(qr, o);
+                updateResultChrome(o);
+                updateLiveWarning(o);
+            } catch (e) {
+                // Inhalt passt nicht mehr (z. B. Fehlerkorrektur erhöht):
+                // Vorschau bleibt stehen, aber wir sagen es deutlich.
+                const box = document.getElementById('liveWarning');
+                if (box) {
+                    box.innerHTML = '<strong>Hinweis zur Lesbarkeit</strong><ul>' +
+                        '<li>Mit dieser Einstellung passt der Inhalt nicht mehr in den QR-Code – ' +
+                        'bitte Fehlerkorrektur reduzieren oder Inhalt kürzen.</li></ul>';
+                    box.classList.add('show');
+                }
+            }
+        }
+
+        // Zeigt Lesbarkeits-Hinweise als Banner statt als Dialog
+        function updateLiveWarning(o) {
+            const box = document.getElementById('liveWarning');
+            if (!box) return;
+
+            const notes = [];
+
+            if (o.transparent) {
+                notes.push('Transparenter Hintergrund: Der Code ist nur auf hellem Untergrund lesbar.');
+            } else {
+                const r = contrastRatio(o.dark, o.light);
+                if (r < 3) {
+                    notes.push('Kontrast sehr gering (' + r.toFixed(1) + ':1) – der Code wird vermutlich nicht gelesen.');
+                } else if (r < 5) {
+                    notes.push('Kontrast niedrig (' + r.toFixed(1) + ':1) – empfohlen sind mindestens 5:1.');
+                }
+            }
+
+            if (o.cornerEnabled) {
+                const ref = o.transparent ? '#ffffff' : o.light;
+                const farben = o.cornerSplit ? [o.cornerTL, o.cornerTR, o.cornerBL] : [o.corner];
+                let min = Infinity;
+                farben.forEach((c) => { min = Math.min(min, contrastRatio(c, ref)); });
+                if (min < 4.5) {
+                    notes.push('Ecken-Farbe zu schwach (' + min.toFixed(1) + ':1) – Finder-Muster brauchen mindestens 4,5:1.');
+                }
+            }
+
+            const ec = document.getElementById('errorCorrection').value;
+            if (o.logo && ec !== 'H' && o.logoSize >= 0.15) {
+                notes.push('Logo bei niedriger Fehlerkorrektur – bitte „Sehr hoch (30 %)" wählen.');
+            }
+
+            if (!notes.length) {
+                box.classList.remove('show');
+                box.innerHTML = '';
+                return;
+            }
+
+            box.innerHTML = '<strong>Hinweis zur Lesbarkeit</strong><ul>' +
+                notes.map((n) => '<li>' + n + '</li>').join('') + '</ul>';
+            box.classList.add('show');
         }
 
         /* ================= Generieren ================= */
@@ -1506,6 +1651,7 @@
 
             lastRender = { text: text, ecLevel: ecLevel };
             updateResultChrome(o);
+            updateLiveWarning(o);
 
             // Bugfix: alter Selbsttest-Ergebnis darf nicht stehen bleiben
             const st = document.getElementById('selfTestResult');
@@ -1553,12 +1699,18 @@
             let dataUrl;
             let actual;
             try {
-                const qr = buildQR(lastRender.text, lastRender.ecLevel);
+                const qr = buildQR(lastRender.text, currentEC());
                 const tmp = document.createElement('canvas');
                 actual = paintCanvas(tmp, qr, o, target);
                 dataUrl = tmp.toDataURL('image/png');
             } catch (e) {
-                alert('Export fehlgeschlagen: ' + (e && e.message ? e.message : e));
+                const msg = String(e && e.message ? e.message : e);
+                if (msg.indexOf('overflow') !== -1) {
+                    alert('Der Inhalt passt nicht zur gewählten Fehlerkorrektur.\n' +
+                          'Bitte Stufe reduzieren oder Inhalt kürzen.');
+                } else {
+                    alert('Export fehlgeschlagen: ' + msg);
+                }
                 return;
             }
 
@@ -1609,7 +1761,7 @@
                 if (typeof jsQR !== 'function') throw new Error('Decoder fehlt');
 
                 const o = readOptions();
-                const qr = buildQR(lastRender.text, lastRender.ecLevel);
+                const qr = buildQR(lastRender.text, currentEC());
                 const tmp = document.createElement('canvas');
                 paintCanvas(tmp, qr, o, 600);
 
@@ -1629,7 +1781,7 @@
                 out.textContent = ok
                     ? '✓ lesbar (geprüft mit lokalem Decoder)'
                     : '✗ nicht lesbar – bitte Kontrast/Farben prüfen';
-                out.style.color = ok ? '#28a745' : '#dc3545';
+                out.style.color = ok ? '#1e7e34' : '#b02a37';
             } catch (e) {
                 out.textContent = '✗ Test fehlgeschlagen: ' + (e && e.message ? e.message : e);
                 out.style.color = '#dc3545';
@@ -1685,25 +1837,21 @@
             document.getElementById('cornerSplitColors').style.display = this.checked ? 'flex' : 'none';
         });
 
-        // Logo
-        document.getElementById('logoFile').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
+        // Logo-Datei verarbeiten (gemeinsam für Datei-Dialog und Drag & Drop)
+        function handleLogoFile(file) {
+            if (!file) return false;
 
             if (!file.type.startsWith('image/')) {
                 alert('Bitte wähle eine Bilddatei!');
-                e.target.value = '';
-                return;
+                return false;
             }
             if (file.type === 'image/svg+xml') {
                 alert('SVG-Logos werden nicht unterstützt. Bitte PNG oder JPG verwenden.');
-                e.target.value = '';
-                return;
+                return false;
             }
             if (file.size > 5 * 1024 * 1024) {
                 alert('Logo darf max. 5MB groß sein!');
-                e.target.value = '';
-                return;
+                return false;
             }
 
             const reader = new FileReader();
@@ -1714,6 +1862,7 @@
                     document.getElementById('logoPreview').innerHTML =
                         `<img src="${event.target.result}" alt="Logo Vorschau" />` +
                         `<button class="remove-logo show" id="removeLogo" onclick="removeLogo()" title="Logo entfernen">✕</button>`;
+                    scheduleLivePreview();
                 };
                 img.onerror = function() {
                     alert('Logo konnte nicht geladen werden!');
@@ -1722,7 +1871,65 @@
                 img.src = event.target.result;
             };
             reader.readAsDataURL(file);
+            return true;
+        }
+
+        document.getElementById('logoFile').addEventListener('change', function(e) {
+            if (!handleLogoFile(e.target.files[0])) {
+                e.target.value = '';
+            }
         });
+
+        /* ================= Drag & Drop für das Logo ================= */
+
+        (function initLogoDrop() {
+            const zone = document.getElementById('logoDrop');
+            const input = document.getElementById('logoFile');
+            if (!zone) return;
+
+            // Klick / Tastatur öffnet den normalen Datei-Dialog
+            zone.addEventListener('click', () => input.click());
+            zone.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    input.click();
+                }
+            });
+
+            ['dragenter', 'dragover'].forEach((evt) => {
+                zone.addEventListener(evt, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    zone.classList.add('dragover');
+                });
+            });
+
+            ['dragleave', 'dragend'].forEach((evt) => {
+                zone.addEventListener(evt, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    zone.classList.remove('dragover');
+                });
+            });
+
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                zone.classList.remove('dragover');
+
+                const dt = e.dataTransfer;
+                if (!dt) return;
+                const file = dt.files && dt.files[0];
+                if (file) handleLogoFile(file);
+            });
+
+            // Verhindern, dass der Browser eine daneben fallengelassene Datei öffnet
+            ['dragover', 'drop'].forEach((evt) => {
+                window.addEventListener(evt, (e) => {
+                    if (!zone.contains(e.target)) e.preventDefault();
+                });
+            });
+        })();
 
         function removeLogo() {
             logoImage = null;
@@ -1834,6 +2041,14 @@
             el.addEventListener('change', saveSettings);
         });
 
+        // Design-Änderungen aktualisieren die Vorschau still (gedrosselt)
+        LIVE_IDS.forEach((id) => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.addEventListener('input', scheduleLivePreview);
+            el.addEventListener('change', scheduleLivePreview);
+        });
+
         document.getElementById('persistSettings').addEventListener('change', function() {
             if (this.checked) {
                 saveSettings();
@@ -1864,7 +2079,7 @@
             }
 
             const o = readOptions();
-            const qr = buildQR(lastRender.text, lastRender.ecLevel);
+            const qr = buildQR(lastRender.text, currentEC());
             const tmp = document.createElement('canvas');
             paintCanvas(tmp, qr, o, 700);
             const url = tmp.toDataURL('image/png');
