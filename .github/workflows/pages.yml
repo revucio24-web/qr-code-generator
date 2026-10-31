@@ -27,11 +27,11 @@ jobs:
       - name: Stage site files
         run: |
           mkdir -p _site
-          # alle Dateien im Wurzelverzeichnis (HTML, JS, CSS, Bilder, README)
-          find . -maxdepth 1 -type f -exec cp {} _site/ \;
+          # alles außer Git-Metadaten (inkl. Unterordner wie icons/)
+          rsync -a --exclude='.git' --exclude='.github' --exclude='_site' ./ _site/
           touch _site/.nojekyll
           echo "--- ausgelieferte Dateien ---"
-          ls -la _site
+          find _site -type f | sort
 
       - name: Configure Pages
         uses: actions/configure-pages@v5

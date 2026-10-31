@@ -62,3 +62,13 @@ weitergibt, muss den Quellcode ebenfalls unter AGPL-3.0 offenlegen.
 - Keine Analytics, keine Cookies, keine Werbung
 - Alle Bibliotheken liegen lokal im Repository (kein CDN)
 - Nach dem ersten Besuch ist die App per Service Worker vollständig offline nutzbar
+
+## Erweiterungen (v2.1)
+
+- Ecken (Finder-Muster) einfarbig oder **einzeln** färbbar
+- Modul-Stil: **Quadrat** oder abgerundet (getestet 128–512 px)
+- **PNG-Export** bis 2048 px, SVG verlustfrei
+- **Druckbogen A4** (12 Codes pro Seite)
+- **Stapelverarbeitung**: CSV/Zeilen → ZIP mit PNG (+ optional SVG)
+- **Selbsttest**: lokaler Decoder prüft, ob der erzeugte Code lesbar ist
+- Einstellungen optional speichern (nur Design, keine Inhalte) + Löschbutton

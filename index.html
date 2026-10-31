@@ -358,6 +358,45 @@
             text-decoration: underline;
         }
 
+        /* ===== DRUCKBOGEN ===== */
+        #printSheet { display: none; }
+
+        @media print {
+            @page { size: A4 portrait; margin: 12mm; }
+
+            body {
+                display: block;
+                background: #fff;
+                padding: 0;
+                min-height: auto;
+            }
+
+            body > .container { display: none !important; }
+
+            #printSheet {
+                display: grid !important;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8mm;
+            }
+
+            .print-cell {
+                break-inside: avoid;
+                text-align: center;
+            }
+
+            .print-cell img {
+                width: 100%;
+                height: auto;
+                display: block;
+            }
+
+            .print-cell .cap {
+                font-size: 8pt;
+                color: #333;
+                margin-top: 2mm;
+            }
+        }
+
         /* ===== LOGO ===== */
         .logo-preview {
             margin-top: 10px;
@@ -555,6 +594,7 @@
             <button class="tab active" role="tab" aria-selected="true" onclick="switchTab('content', this)">Inhalt</button>
             <button class="tab" role="tab" aria-selected="false" onclick="switchTab('design', this)">Design</button>
             <button class="tab" role="tab" aria-selected="false" onclick="switchTab('logo', this)">Logo</button>
+            <button class="tab" role="tab" aria-selected="false" onclick="switchTab('batch', this)">Stapel</button>
         </div>
 
         <!-- Tab: Inhalt -->
@@ -742,6 +782,33 @@
                 </div>
             </div>
 
+            <div class="checkbox-group" id="cornerSplitRow" style="display:none;">
+                <input type="checkbox" id="cornerSplit" />
+                <label for="cornerSplit">Ecken einzeln färben</label>
+            </div>
+            <div class="color-group" id="cornerSplitColors" style="display:none; margin-bottom:16px;">
+                <div>
+                    <label for="cornerTL" class="label-sm">oben links:</label>
+                    <input type="color" id="cornerTL" value="#4c5fd7" />
+                </div>
+                <div>
+                    <label for="cornerTR" class="label-sm">oben rechts:</label>
+                    <input type="color" id="cornerTR" value="#e74c3c" />
+                </div>
+                <div>
+                    <label for="cornerBL" class="label-sm">unten links:</label>
+                    <input type="color" id="cornerBL" value="#27ae60" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="moduleStyle">Modul-Stil:</label>
+                <select id="moduleStyle">
+                    <option value="square">Quadrat (max. Lesbarkeit)</option>
+                    <option value="dots">Abgerundet (weicher)</option>
+                </select>
+            </div>
+
             <div style="border-top:1px solid #eee; margin-top:8px; padding-top:18px;">
                 <div class="checkbox-group">
                     <input type="checkbox" id="persistSettings" />
@@ -785,6 +852,28 @@
             </div>
         </div>
 
+        <!-- Tab: Stapel -->
+        <div id="batch" class="tab-content">
+            <div class="form-group">
+                <label for="batchInput">Eine Zeile = ein QR-Code</label>
+                <textarea id="batchInput" style="min-height:120px;" placeholder="https://beispiel.de;startseite&#10;https://beispiel.de/kontakt;kontakt&#10;https://beispiel.de/impressum"></textarea>
+                <div class="hint">Format: <code>Inhalt;dateiname</code> – der Dateiname ist optional.</div>
+            </div>
+
+            <div class="form-group">
+                <label for="batchFile">… oder CSV-Datei wählen:</label>
+                <input type="file" id="batchFile" accept=".csv,.txt,text/csv,text/plain" />
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="batchSvg" />
+                <label for="batchSvg">Zusätzlich SVG-Dateien erzeugen</label>
+            </div>
+
+            <button type="button" class="secondary-btn" onclick="buildBatchZip()" id="batchBtn">📦 ZIP mit QR-Codes erstellen</button>
+            <div class="hint" id="batchInfo">Maximal 200 Zeilen pro Durchlauf. Es gelten die Design-Einstellungen.</div>
+        </div>
+
         <button onclick="generateQR()" id="generateBtn">✨ QR-Code generieren</button>
 
         <div class="qr-result" id="result">
@@ -795,6 +884,20 @@
             <div class="result-actions">
                 <button class="download-btn" onclick="downloadQR('png')">⬇️ PNG</button>
                 <button class="svg-btn" onclick="downloadQR('svg')">⬇️ SVG (verlustfrei)</button>
+            </div>
+            <div class="result-actions" style="margin-top:8px;">
+                <button class="secondary-btn" onclick="runSelfTest()" id="selfTestBtn" style="font-size:14px; padding:12px;">🔍 Code testen</button>
+                <button class="secondary-btn" onclick="buildPrintSheet()" style="font-size:14px; padding:12px;">🖨️ Druckbogen (A4)</button>
+                <span id="selfTestResult" style="align-self:center; font-size:13px; color:#666;"></span>
+            </div>
+            <div class="form-group" style="margin-top:12px; text-align:left;">
+                <label for="exportSize" class="label-sm">PNG-Auflösung beim Download:</label>
+                <select id="exportSize">
+                    <option value="512">512 px</option>
+                    <option value="1024" selected>1024 px</option>
+                    <option value="2048">2048 px (Druck)</option>
+                    <option value="preview">Wie Vorschau</option>
+                </select>
             </div>
             <div class="hint" id="resHint" style="display:none; margin-top:10px;"></div>
         </div>
@@ -820,6 +923,9 @@
             </div>
         </footer>
     </div>
+
+    <!-- Druckbogen: nur beim Drucken sichtbar -->
+    <div id="printSheet" aria-hidden="true"></div>
 
     <!-- QR-Encoder: lokal eingebunden, keine externen Requests -->
     <script src="qrcode.min.js"></script>
@@ -1026,6 +1132,14 @@
                    (row >= count - 7 && col < 7);
         }
 
+        // Welche Ecke? 'tl' | 'tr' | 'bl' | null
+        function finderCorner(row, col, count) {
+            if (row < 7 && col < 7) return 'tl';
+            if (row < 7 && col >= count - 7) return 'tr';
+            if (row >= count - 7 && col < 7) return 'bl';
+            return null;
+        }
+
         function readOptions() {
             const transparent = document.getElementById('transparentBg').checked;
             return {
@@ -1035,6 +1149,11 @@
                 transparent: transparent,
                 cornerEnabled: document.getElementById('cornerEnabled').checked,
                 corner: document.getElementById('cornerColor').value,
+                cornerSplit: document.getElementById('cornerSplit').checked,
+                cornerTL: document.getElementById('cornerTL').value,
+                cornerTR: document.getElementById('cornerTR').value,
+                cornerBL: document.getElementById('cornerBL').value,
+                moduleStyle: document.getElementById('moduleStyle').value,
                 logo: logoImage,
                 logoSize: parseInt(document.getElementById('logoSize').value, 10) / 100,
                 logoBg: document.getElementById('logoBorder').checked,
@@ -1042,37 +1161,82 @@
             };
         }
 
-        function drawToCanvas(qr, o) {
-            const canvas = document.getElementById('qrCanvas');
+        // Farbe eines Moduls
+        function moduleColor(row, col, count, o) {
+            if (!o.cornerEnabled) return o.dark;
+            const corner = finderCorner(row, col, count);
+            if (!corner) return o.dark;
+            if (o.cornerSplit) {
+                if (corner === 'tl') return o.cornerTL;
+                if (corner === 'tr') return o.cornerTR;
+                return o.cornerBL;
+            }
+            return o.corner;
+        }
+
+        // Zeichnet den Code auf ein beliebiges Canvas (Vorschau und Export)
+        function paintCanvas(canvas, qr, o, targetPx) {
             const ctx = canvas.getContext('2d');
             const count = qr.getModuleCount();
             const total = count + QUIET * 2;
-            // Bugfix: mindestens 2 px pro Modul, sonst ist der Code nicht scanbar
-            const scale = Math.max(2, Math.floor(o.size / total));
+            // mindestens 2 px pro Modul, sonst ist der Code nicht scanbar
+            const scale = Math.max(2, Math.floor(targetPx / total));
             const px = total * scale;
 
             canvas.width = px;
             canvas.height = px;
 
-            // Hintergrund
             ctx.clearRect(0, 0, px, px);
             if (!o.transparent) {
                 ctx.fillStyle = o.light;
                 ctx.fillRect(0, 0, px, px);
             }
 
+            const rounded = o.moduleStyle === 'dots';
+
             for (let row = 0; row < count; row++) {
                 for (let col = 0; col < count; col++) {
                     if (!qr.isDark(row, col)) continue;
+
+                    const x = (col + QUIET) * scale;
+                    const y = (row + QUIET) * scale;
                     const finder = isFinder(row, col, count);
-                    ctx.fillStyle = (finder && o.cornerEnabled) ? o.corner : o.dark;
-                    ctx.fillRect((col + QUIET) * scale, (row + QUIET) * scale, scale, scale);
+                    ctx.fillStyle = moduleColor(row, col, count, o);
+
+                    // Finder-Muster bleiben immer eckig -> Lesbarkeit
+                    if (rounded && !finder && scale >= 4) {
+                        const r = Math.max(1, scale * 0.2);
+                        ctx.beginPath();
+                        if (typeof ctx.roundRect === 'function') {
+                            ctx.roundRect(x, y, scale, scale, r);
+                        } else {
+                            ctx.moveTo(x + r, y);
+                            ctx.lineTo(x + scale - r, y);
+                            ctx.quadraticCurveTo(x + scale, y, x + scale, y + r);
+                            ctx.lineTo(x + scale, y + scale - r);
+                            ctx.quadraticCurveTo(x + scale, y + scale, x + scale - r, y + scale);
+                            ctx.lineTo(x + r, y + scale);
+                            ctx.quadraticCurveTo(x, y + scale, x, y + scale - r);
+                            ctx.lineTo(x, y + r);
+                            ctx.quadraticCurveTo(x, y, x + r, y);
+                        }
+                        ctx.closePath();
+                        ctx.fill();
+                    } else {
+                        ctx.fillRect(x, y, scale, scale);
+                    }
                 }
             }
 
             if (o.logo) {
                 drawLogo(ctx, px, o);
             }
+
+            return px;
+        }
+
+        function drawToCanvas(qr, o) {
+            return paintCanvas(document.getElementById('qrCanvas'), qr, o, o.size);
         }
 
         function drawLogo(ctx, px, o) {
@@ -1127,22 +1291,33 @@
                 parts.push(`<rect width="${total}" height="${total}" fill="${o.light}"/>`);
             }
 
-            let darkPath = '';
-            let finderPath = '';
+            const dots = o.moduleStyle === 'dots';
+            const squareGroups = {};
+            const dotGroups = {};
 
             for (let row = 0; row < count; row++) {
                 for (let col = 0; col < count; col++) {
                     if (!qr.isDark(row, col)) continue;
-                    const seg = `M${col + QUIET} ${row + QUIET}h1v1h-1z`;
-                    if (isFinder(row, col, count)) finderPath += seg;
-                    else darkPath += seg;
+
+                    const finder = isFinder(row, col, count);
+                    const color = moduleColor(row, col, count, o);
+
+                    if (dots && !finder) {
+                        dotGroups[color] = (dotGroups[color] || '') +
+                            `<rect x="${col + QUIET}" y="${row + QUIET}" width="1" height="1" rx="0.2" ry="0.2"/>`;
+                    } else {
+                        squareGroups[color] = (squareGroups[color] || '') +
+                            `M${col + QUIET} ${row + QUIET}h1v1h-1z`;
+                    }
                 }
             }
 
-            if (darkPath) parts.push(`<path d="${darkPath}" fill="${o.dark}"/>`);
-            if (finderPath) {
-                parts.push(`<path d="${finderPath}" fill="${(o.cornerEnabled ? o.corner : o.dark)}"/>`);
-            }
+            Object.keys(squareGroups).forEach((color) => {
+                parts.push(`<path d="${squareGroups[color]}" fill="${color}"/>`);
+            });
+            Object.keys(dotGroups).forEach((color) => {
+                parts.push(`<g fill="${color}">${dotGroups[color]}</g>`);
+            });
 
             if (o.logo) {
                 const logoUnits = total * o.logoSize;
@@ -1332,7 +1507,7 @@
 
         function downloadQR(format) {
             const canvas = document.getElementById('qrCanvas');
-            if (!canvas || !lastSVG) {
+            if (!canvas || !lastRender) {
                 alert('Bitte generiere zuerst einen QR-Code!');
                 return;
             }
@@ -1352,10 +1527,98 @@
                 return;
             }
 
+            // PNG in gewählter Auflösung neu rendern (Vorschau bleibt unberührt)
+            const sel = document.getElementById('exportSize').value;
+            const o = readOptions();
+            let target = sel === 'preview' ? canvas.width : parseInt(sel, 10);
+            if (!target || target < 128) target = canvas.width;
+
+            let dataUrl;
+            let actual;
+            try {
+                const qr = buildQR(lastRender.text, lastRender.ecLevel);
+                const tmp = document.createElement('canvas');
+                actual = paintCanvas(tmp, qr, o, target);
+                dataUrl = tmp.toDataURL('image/png');
+            } catch (e) {
+                alert('Export fehlgeschlagen: ' + (e && e.message ? e.message : e));
+                return;
+            }
+
             const a = document.createElement('a');
-            a.download = `qr-${typ}.png`;
-            a.href = canvas.toDataURL('image/png');
+            a.download = `qr-${typ}-${actual}px.png`;
+            a.href = dataUrl;
             a.click();
+        }
+
+        /* ================= Selbsttest (lokal dekodieren) ================= */
+
+        function loadScriptOnce(src, marker) {
+            return new Promise((resolve, reject) => {
+                if (document.querySelector('script[data-' + marker + ']')) return resolve();
+                const s = document.createElement('script');
+                s.src = src;
+                s.setAttribute('data-' + marker, '1');
+                s.onload = () => resolve();
+                s.onerror = () => reject(new Error('Datei konnte nicht geladen werden'));
+                document.head.appendChild(s);
+            });
+        }
+
+        async function runSelfTest() {
+            const out = document.getElementById('selfTestResult');
+            const btn = document.getElementById('selfTestBtn');
+
+            if (!lastRender) {
+                out.textContent = 'Bitte zuerst einen Code erzeugen.';
+                out.style.color = '#666';
+                return;
+            }
+
+            out.textContent = 'prüfe …';
+            out.style.color = '#666';
+            btn.disabled = true;
+
+            try {
+                await loadScriptOnce('./jsqr.min.js', 'qrdecoder');
+            } catch (e) {
+                out.textContent = '✗ Decoder nicht verfügbar (offline noch nicht geladen)';
+                out.style.color = '#dc3545';
+                btn.disabled = false;
+                return;
+            }
+
+            try {
+                if (typeof jsQR !== 'function') throw new Error('Decoder fehlt');
+
+                const o = readOptions();
+                const qr = buildQR(lastRender.text, lastRender.ecLevel);
+                const tmp = document.createElement('canvas');
+                paintCanvas(tmp, qr, o, 600);
+
+                // Auf Weiß legen, damit Transparenz den Test nicht verfälscht
+                const comp = document.createElement('canvas');
+                comp.width = tmp.width;
+                comp.height = tmp.height;
+                const cx = comp.getContext('2d');
+                cx.fillStyle = '#ffffff';
+                cx.fillRect(0, 0, comp.width, comp.height);
+                cx.drawImage(tmp, 0, 0);
+
+                const data = cx.getImageData(0, 0, comp.width, comp.height);
+                const res = jsQR(data.data, comp.width, comp.height, { inversionAttempts: 'attemptBoth' });
+                const ok = !!res && res.data === lastRender.text;
+
+                out.textContent = ok
+                    ? '✓ lesbar (geprüft mit lokalem Decoder)'
+                    : '✗ nicht lesbar – bitte Kontrast/Farben prüfen';
+                out.style.color = ok ? '#28a745' : '#dc3545';
+            } catch (e) {
+                out.textContent = '✗ Test fehlgeschlagen: ' + (e && e.message ? e.message : e);
+                out.style.color = '#dc3545';
+            }
+
+            btn.disabled = false;
         }
 
         /* ================= UI-Verdrahtung ================= */
@@ -1394,6 +1657,15 @@
 
         document.getElementById('cornerEnabled').addEventListener('change', function() {
             document.getElementById('cornerColorRow').style.display = this.checked ? 'flex' : 'none';
+            document.getElementById('cornerSplitRow').style.display = this.checked ? 'flex' : 'none';
+            if (!this.checked) {
+                document.getElementById('cornerSplit').checked = false;
+                document.getElementById('cornerSplitColors').style.display = 'none';
+            }
+        });
+
+        document.getElementById('cornerSplit').addEventListener('change', function() {
+            document.getElementById('cornerSplitColors').style.display = this.checked ? 'flex' : 'none';
         });
 
         // Logo
@@ -1467,7 +1739,8 @@
         const SETTING_FIELDS = [
             'qrType', 'darkColor', 'lightColor', 'size', 'errorCorrection',
             'transparentBg', 'dontAskTransparent', 'cornerEnabled', 'cornerColor',
-            'logoSize', 'logoBorder', 'logoShadow'
+            'cornerSplit', 'cornerTL', 'cornerTR', 'cornerBL', 'moduleStyle',
+            'logoSize', 'logoBorder', 'logoShadow', 'exportSize'
         ];
 
         function persistEnabled() {
@@ -1502,6 +1775,10 @@
             document.getElementById('cornerColorValue').textContent = document.getElementById('cornerColor').value.toUpperCase();
             document.getElementById('cornerColorRow').style.display =
                 document.getElementById('cornerEnabled').checked ? 'flex' : 'none';
+            document.getElementById('cornerSplitRow').style.display =
+                document.getElementById('cornerEnabled').checked ? 'flex' : 'none';
+            document.getElementById('cornerSplitColors').style.display =
+                (document.getElementById('cornerEnabled').checked && document.getElementById('cornerSplit').checked) ? 'flex' : 'none';
 
             const type = document.getElementById('qrType').value;
             document.querySelectorAll('#content .fields').forEach((el) => { el.style.display = 'none'; });
@@ -1558,6 +1835,146 @@
 
         // Gespeicherte Einstellungen anwenden (falls vorhanden)
         loadSettings();
+
+        /* ================= Druckbogen ================= */
+
+        function buildPrintSheet() {
+            if (!lastRender) {
+                alert('Bitte generiere zuerst einen QR-Code!');
+                return;
+            }
+
+            const o = readOptions();
+            const qr = buildQR(lastRender.text, lastRender.ecLevel);
+            const tmp = document.createElement('canvas');
+            paintCanvas(tmp, qr, o, 700);
+            const url = tmp.toDataURL('image/png');
+            const typ = document.getElementById('qrType').value;
+
+            const sheet = document.getElementById('printSheet');
+            sheet.innerHTML = '';
+
+            for (let i = 1; i <= 12; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'print-cell';
+
+                const img = document.createElement('img');
+                img.src = url;
+                img.alt = 'QR-Code ' + i;
+
+                const cap = document.createElement('div');
+                cap.className = 'cap';
+                cap.textContent = typ + ' · ' + i;
+
+                cell.appendChild(img);
+                cell.appendChild(cap);
+                sheet.appendChild(cell);
+            }
+
+            window.print();
+        }
+
+        /* ================= Stapel (CSV -> ZIP) ================= */
+
+        document.getElementById('batchFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                document.getElementById('batchInput').value = String(event.target.result);
+                document.getElementById('batchInfo').textContent = 'Datei geladen: ' + file.name;
+            };
+            reader.onerror = function() {
+                document.getElementById('batchInfo').textContent = 'Datei konnte nicht gelesen werden.';
+            };
+            reader.readAsText(file, 'utf-8');
+        });
+
+        async function buildBatchZip() {
+            const info = document.getElementById('batchInfo');
+            const btn = document.getElementById('batchBtn');
+            const raw = document.getElementById('batchInput').value;
+
+            const lines = raw.split(/\r?\n/)
+                .map((l) => l.trim())
+                .filter((l) => l.length > 0);
+
+            if (lines.length === 0) {
+                info.textContent = 'Bitte mindestens eine Zeile eingeben.';
+                return;
+            }
+            if (lines.length > 200) {
+                info.textContent = 'Maximal 200 Zeilen pro Durchlauf (aktuell ' + lines.length + ').';
+                return;
+            }
+
+            try {
+                await loadScriptOnce('./jszip.min.js', 'jszip');
+            } catch (e) {
+                info.textContent = '✗ ZIP-Bibliothek nicht verfügbar (offline noch nicht geladen).';
+                return;
+            }
+            if (typeof JSZip !== 'function') {
+                info.textContent = '✗ ZIP-Bibliothek fehlt.';
+                return;
+            }
+
+            btn.disabled = true;
+            info.textContent = 'erstelle ' + lines.length + ' Codes …';
+
+            const zip = new JSZip();
+            const o = readOptions();
+            const ec = document.getElementById('errorCorrection').value;
+            const withSvg = document.getElementById('batchSvg').checked;
+
+            let ok = 0;
+            let fail = 0;
+
+            try {
+                for (let i = 0; i < lines.length; i++) {
+                    const parts = lines[i].split(';');
+                    const content = (parts[0] || '').trim();
+                    if (!content) { fail++; continue; }
+
+                    let name = (parts[1] || '').trim() || ('qr-' + String(i + 1).padStart(3, '0'));
+                    name = name.replace(/[^\w.\-]+/g, '_').slice(0, 60) || ('qr-' + (i + 1));
+
+                    try {
+                        const qr = buildQR(content, ec);
+
+                        const tmp = document.createElement('canvas');
+                        paintCanvas(tmp, qr, o, 512);
+
+                        const blob = await new Promise((resolve, reject) => {
+                            tmp.toBlob((b) => (b ? resolve(b) : reject(new Error('Blob fehlgeschlagen'))), 'image/png');
+                        });
+
+                        zip.file(name + '.png', blob);
+                        if (withSvg) zip.file(name + '.svg', buildSVG(qr, o));
+                        ok++;
+                    } catch (e) {
+                        fail++;
+                    }
+                }
+
+                const zipBlob = await zip.generateAsync({ type: 'blob' });
+                const url = URL.createObjectURL(zipBlob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'qr-codes.zip';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                setTimeout(() => URL.revokeObjectURL(url), 2000);
+
+                info.textContent = ok + ' Codes erstellt' +
+                    (fail ? ', ' + fail + ' übersprungen (Inhalt zu lang)' : '') + '.';
+            } catch (e) {
+                info.textContent = '✗ Fehler: ' + (e && e.message ? e.message : e);
+            }
+
+            btn.disabled = false;
+        }
 
         /* ================= Service Worker (offline) ================= */
 

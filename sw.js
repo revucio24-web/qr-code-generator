@@ -1,12 +1,11 @@
-﻿/* Service Worker â€“ QR-Code Generator Pro
+/* Service Worker – QR-Code Generator Pro
  *
- * Ziel: nach dem ersten Besuch vollstÃ¤ndig offline nutzbar.
+ * Ziel: nach dem ersten Besuch vollständig offline nutzbar.
  *
  * Strategie:
- *   - Dokumente (HTML): Cache zuerst -> sofortiger Start, offline sicher.
- *     Im Hintergrund wird die neuere Version nachgeladen (stale-while-revalidate).
- *   - Ãœbrige eigene Dateien: Cache zuerst, sonst Netz.
- *   - Fremde HerkÃ¼nfte: nicht anfassen (die App lÃ¤dt ohnehin nichts Externes).
+ *   - Dokumente (HTML): Netz zuerst -> immer aktuell; offline aus dem Cache.
+ *   - Übrige eigene Dateien: Cache zuerst, sonst Netz.
+ *   - Fremde Herkünfte: nicht anfassen (die App lädt ohnehin nichts Externes).
  */
 
 const CACHE_NAME = 'qr-generator-v5';
@@ -39,7 +38,7 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Ist die Anfrage ein Dokument (HTML) â€“ unabhÃ¤ngig vom mode-Wert?
+// Ist die Anfrage ein Dokument (HTML)? mode ist nicht bei allen Requests gesetzt.
 function isDocumentRequest(req) {
   if (req.mode === 'navigate') return true;
   const accept = req.headers.get('accept') || '';
@@ -70,7 +69,7 @@ self.addEventListener('fetch', (event) => {
 async function handleDocument(req) {
   const cache = await caches.open(CACHE_NAME);
 
-  // 1) Online: immer die frischeste Version (mit Timeout, damit es offline schnell geht)
+  // 1) Online: immer die frischeste Version (Timeout hält den Offline-Start schnell)
   try {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 2500);
@@ -81,7 +80,6 @@ async function handleDocument(req) {
       cache.put('./index.html', res.clone()).catch(() => {});
       return res;
     }
-    // z. B. 404: lieber den Cache nehmen
     if (res && res.status !== 200) {
       const fallback = await cache.match('./index.html');
       if (fallback) return fallback;
@@ -91,7 +89,7 @@ async function handleDocument(req) {
     // offline oder Timeout -> Cache
   }
 
-  // 2) Offline: Cache (Query-Strings ignorieren)
+  // 2) Offline: Cache (Query-Strings ignorieren, z. B. ?utm=...)
   const cached =
     (await cache.match(req, { ignoreSearch: true })) ||
     (await cache.match('./index.html')) ||
@@ -104,7 +102,7 @@ async function handleDocument(req) {
     '<!doctype html><meta charset="utf-8"><title>Offline</title>' +
     '<body style="font-family:system-ui;padding:2rem">' +
     '<h1>Offline</h1><p>Diese Seite wurde noch nicht gespeichert. ' +
-    'Bitte einmal mit Internetverbindung Ã¶ffnen.</p>',
+    'Bitte einmal mit Internetverbindung öffnen.</p>',
     { status: 503, headers: { 'Content-Type': 'text/html; charset=utf-8' } }
   );
 }
