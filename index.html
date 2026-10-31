@@ -951,6 +951,11 @@
             element.classList.add('active');
             element.setAttribute('aria-selected', 'true');
             document.getElementById(tabName).classList.add('active');
+
+            // Bugfix: Im Stapel-Tab gibt es keinen Einzelcode – der Button
+            // würde sonst das (leere) Inhaltsformular validieren und meckern.
+            const genBtn = document.getElementById('generateBtn');
+            if (genBtn) genBtn.style.display = (tabName === 'batch') ? 'none' : '';
         }
 
         function showError(id, show) {
@@ -1827,9 +1832,11 @@
             }
         });
 
-        // Strg/⌘ + Enter = generieren
+        // Strg/⌘ + Enter = generieren (im Stapel-Tab ohne Funktion)
         document.addEventListener('keydown', (e) => {
             if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                const imStapel = document.getElementById('batch').classList.contains('active');
+                if (imStapel) return;
                 e.preventDefault();
                 generateQR();
             }
