@@ -47,3 +47,18 @@ bleiben im Browser.
 ## Live
 
 https://revucio24-web.github.io/qr-code-generator/
+
+## Lizenz
+
+Dieses Projekt steht unter der **GNU Affero General Public License v3.0 (AGPL-3.0)**.
+Siehe [LICENSE](LICENSE).
+
+Kurz gesagt: Nutzen und Verändern ist erlaubt. Wer die Software (auch als Webdienst)
+weitergibt, muss den Quellcode ebenfalls unter AGPL-3.0 offenlegen.
+
+## Datenschutz
+
+- Keine Übertragung von Nutzereingaben, Logos oder erzeugten Codes
+- Keine Analytics, keine Cookies, keine Werbung
+- Alle Bibliotheken liegen lokal im Repository (kein CDN)
+- Nach dem ersten Besuch ist die App per Service Worker vollständig offline nutzbar

@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#667eea">
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%B1%3C/text%3E%3C/svg%3E">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
     <title>QR-Code Generator Pro</title>
     <style>
         * {
@@ -283,6 +285,9 @@
         .svg-btn { background: #0d6efd; }
         .svg-btn:hover:not(:disabled) { box-shadow: 0 10px 20px rgba(13, 110, 253, 0.4); }
 
+        .secondary-btn { background: #6c757d; }
+        .secondary-btn:hover:not(:disabled) { box-shadow: 0 10px 20px rgba(108, 117, 125, 0.4); }
+
         /* ===== RESULT ===== */
         .qr-result { margin-top: 30px; text-align: center; display: none; }
         .qr-result.show { display: block; }
@@ -323,6 +328,35 @@
 
         .info ul { margin-left: 20px; margin-top: 10px; }
         .info li { margin-bottom: 6px; }
+
+        /* ===== FOOTER ===== */
+        .site-footer {
+            margin-top: 18px;
+            text-align: center;
+            font-size: 12px;
+            color: #8a8f98;
+            line-height: 1.6;
+        }
+
+        .sw-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 999px;
+            background: #e8f5e9;
+            color: #2e7d32;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .site-footer a {
+            text-decoration: none;
+            border-bottom: 1px dotted currentColor;
+        }
+
+        .site-footer a:hover {
+            text-decoration: underline;
+        }
 
         /* ===== LOGO ===== */
         .logo-preview {
@@ -688,6 +722,10 @@
                 <input type="checkbox" id="transparentBg" />
                 <label for="transparentBg">Transparenter Hintergrund</label>
             </div>
+            <div class="checkbox-group" style="margin-top:-8px; margin-bottom:10px; padding-left:32px;">
+                <input type="checkbox" id="dontAskTransparent" style="width:18px;height:18px;" />
+                <label for="dontAskTransparent" style="font-size:13px;">Bei transparentem Hintergrund nicht mehr nachfragen</label>
+            </div>
             <div class="hint" style="margin-top:-6px; margin-bottom:16px;">
                 PNG und SVG behalten die Transparenz. Der Code ist dann nur auf hellem Untergrund lesbar.
             </div>
@@ -702,6 +740,19 @@
                     <input type="color" id="cornerColor" value="#4c5fd7" />
                     <div class="color-value" id="cornerColorValue">#4C5FD7</div>
                 </div>
+            </div>
+
+            <div style="border-top:1px solid #eee; margin-top:8px; padding-top:18px;">
+                <div class="checkbox-group">
+                    <input type="checkbox" id="persistSettings" />
+                    <label for="persistSettings">Einstellungen auf diesem Gerät speichern</label>
+                </div>
+                <div class="hint" style="margin-top:-6px; margin-bottom:12px;">
+                    Nur Design-Einstellungen (Farben, Größe, Fehlerkorrektur) – keine Inhalte, keine Passwörter.
+                </div>
+                <button type="button" class="secondary-btn" onclick="clearSettings()" style="font-size:14px; padding:12px;">
+                    Gespeicherte Daten löschen
+                </button>
             </div>
         </div>
 
@@ -740,6 +791,7 @@
             <div id="qrBox">
                 <canvas id="qrCanvas" width="256" height="256" role="img" aria-label="Generierter QR-Code"></canvas>
             </div>
+            <div class="hint" id="exportInfo" style="margin-top:8px;"></div>
             <div class="result-actions">
                 <button class="download-btn" onclick="downloadQR('png')">⬇️ PNG</button>
                 <button class="svg-btn" onclick="downloadQR('svg')">⬇️ SVG (verlustfrei)</button>
@@ -757,10 +809,20 @@
                 <li>Alle Daten bleiben lokal – nichts wird gesendet</li>
             </ul>
         </div>
+
+        <footer class="site-footer">
+            <span class="sw-badge" id="swBadge" hidden>✓ offline verfügbar</span>
+            <div>Alle Berechnungen laufen in Ihrem Browser. Es werden keine Daten übertragen.</div>
+            <div style="margin-top:4px;">
+                <span id="appVersion">v2.0</span> · <span id="appDate">31.10.2026</span> ·
+                <a href="https://github.com/revucio24-web/qr-code-generator" target="_blank" rel="noopener noreferrer" style="color:#667eea;">Quellcode</a> ·
+                <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer" style="color:#667eea;">AGPL-3.0</a>
+            </div>
+        </footer>
     </div>
 
     <!-- QR-Encoder: lokal eingebunden, keine externen Requests -->
-    <script src="qrcode.js"></script>
+    <script src="qrcode.min.js"></script>
 
     <script>
         // KRITISCH: qrcode.js nutzt standardmäßig Latin-1 (charCodeAt & 0xff).
@@ -1113,6 +1175,13 @@
 
             const px = document.getElementById('qrCanvas').width;
             const hint = document.getElementById('resHint');
+            const exportInfo = document.getElementById('exportInfo');
+
+            if (exportInfo) {
+                exportInfo.textContent =
+                    'Export: ' + px + ' × ' + px + ' px (PNG) · SVG ist beliebig skalierbar';
+            }
+
             if (px > o.size) {
                 hint.textContent =
                     'Hinweis: Für diese Datenmenge wurde die Auflösung auf ' + px +
@@ -1180,9 +1249,11 @@
                     }
                 }
             } else {
-                if (!confirm('Transparenter Hintergrund:\nDer Code ist nur auf einem hellen Untergrund lesbar. ' +
-                    'Auf dunklen Fotos oder farbigen Flächen scannt er nicht.\n\nFortfahren?')) {
-                    return;
+                if (!document.getElementById('dontAskTransparent').checked) {
+                    if (!confirm('Transparenter Hintergrund:\nDer Code ist nur auf einem hellen Untergrund lesbar. ' +
+                        'Auf dunklen Fotos oder farbigen Flächen scannt er nicht.\n\nFortfahren?')) {
+                        return;
+                    }
                 }
             }
 
@@ -1385,6 +1456,122 @@
             document.getElementById('lightColor').value = light;
             document.getElementById('darkColorValue').textContent = dark.toUpperCase();
             document.getElementById('lightColorValue').textContent = light.toUpperCase();
+            saveSettings();
+        }
+
+        /* ================= Einstellungen (Opt-in) ================= */
+
+        const SETTINGS_KEY = 'qrgen.settings.v1';
+
+        // Bewusst NICHT gespeichert: Inhalte (Text, vCard, WiFi-Passwort, Logo)
+        const SETTING_FIELDS = [
+            'qrType', 'darkColor', 'lightColor', 'size', 'errorCorrection',
+            'transparentBg', 'dontAskTransparent', 'cornerEnabled', 'cornerColor',
+            'logoSize', 'logoBorder', 'logoShadow'
+        ];
+
+        function persistEnabled() {
+            const el = document.getElementById('persistSettings');
+            return !!(el && el.checked);
+        }
+
+        function collectSettings() {
+            const obj = {};
+            SETTING_FIELDS.forEach((id) => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                obj[id] = el.type === 'checkbox' ? el.checked : el.value;
+            });
+            return obj;
+        }
+
+        function applySettings(obj) {
+            if (!obj) return;
+            SETTING_FIELDS.forEach((id) => {
+                const el = document.getElementById(id);
+                if (!el || !(id in obj)) return;
+                if (el.type === 'checkbox') el.checked = !!obj[id];
+                else el.value = obj[id];
+            });
+
+            // abhängige Anzeigen aktualisieren
+            document.getElementById('sizeValue').textContent = document.getElementById('size').value + 'px';
+            document.getElementById('logoSizeValue').textContent = document.getElementById('logoSize').value + '%';
+            document.getElementById('darkColorValue').textContent = document.getElementById('darkColor').value.toUpperCase();
+            document.getElementById('lightColorValue').textContent = document.getElementById('lightColor').value.toUpperCase();
+            document.getElementById('cornerColorValue').textContent = document.getElementById('cornerColor').value.toUpperCase();
+            document.getElementById('cornerColorRow').style.display =
+                document.getElementById('cornerEnabled').checked ? 'flex' : 'none';
+
+            const type = document.getElementById('qrType').value;
+            document.querySelectorAll('#content .fields').forEach((el) => { el.style.display = 'none'; });
+            const target = document.getElementById(type + 'Fields');
+            if (target) target.style.display = 'block';
+        }
+
+        function saveSettings() {
+            if (!persistEnabled()) return;
+            try {
+                localStorage.setItem(SETTINGS_KEY, JSON.stringify(collectSettings()));
+            } catch (e) { /* privater Modus o. ä. */ }
+        }
+
+        function loadSettings() {
+            let raw = null;
+            try { raw = localStorage.getItem(SETTINGS_KEY); } catch (e) { raw = null; }
+            if (!raw) return;
+            try {
+                applySettings(JSON.parse(raw));
+                document.getElementById('persistSettings').checked = true;
+            } catch (e) { /* beschädigt -> ignorieren */ }
+        }
+
+        function clearSettings() {
+            try { localStorage.removeItem(SETTINGS_KEY); } catch (e) { /* egal */ }
+            document.getElementById('persistSettings').checked = false;
+        }
+
+        /* ================= Verdrahtung Speichern / Hotkey ================= */
+
+        // Jede Design-Änderung speichern (nur bei aktivem Opt-in)
+        SETTING_FIELDS.forEach((id) => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.addEventListener('change', saveSettings);
+        });
+
+        document.getElementById('persistSettings').addEventListener('change', function() {
+            if (this.checked) {
+                saveSettings();
+            } else {
+                try { localStorage.removeItem(SETTINGS_KEY); } catch (e) { /* egal */ }
+            }
+        });
+
+        // Strg/⌘ + Enter = generieren
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                generateQR();
+            }
+        });
+
+        // Gespeicherte Einstellungen anwenden (falls vorhanden)
+        loadSettings();
+
+        /* ================= Service Worker (offline) ================= */
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(() => {
+                        const badge = document.getElementById('swBadge');
+                        if (badge) badge.hidden = false;
+                    })
+                    .catch(() => {
+                        // Ohne Service Worker funktioniert die App weiterhin – nur nicht offline.
+                    });
+            });
         }
     </script>
 </body>
