@@ -793,11 +793,11 @@
                 </div>
                 <div>
                     <label for="cornerTR" class="label-sm">oben rechts:</label>
-                    <input type="color" id="cornerTR" value="#e74c3c" />
+                    <input type="color" id="cornerTR" value="#c0392b" />
                 </div>
                 <div>
                     <label for="cornerBL" class="label-sm">unten links:</label>
-                    <input type="color" id="cornerBL" value="#27ae60" />
+                    <input type="color" id="cornerBL" value="#1e7d32" />
                 </div>
             </div>
 
@@ -1434,11 +1434,13 @@
 
             if (o.cornerEnabled) {
                 const ref = o.transparent ? '#ffffff' : o.light;
-                const cornerRatio = contrastRatio(o.corner, ref);
-                // Bugfix: 3:1 reicht nicht – Scanner brauchen kräftige Finder-Muster.
-                // Getestet: #667eea (3,7:1) ließ den Code bei jsQR scheitern.
-                if (cornerRatio < 4.5) {
-                    if (!confirm('Die Ecken-Farbe hat nur ' + cornerRatio.toFixed(1) + ':1 Kontrast zum Hintergrund.\n' +
+                // Bei "einzeln" müssen ALLE drei Farben geprüft werden
+                const farben = o.cornerSplit ? [o.cornerTL, o.cornerTR, o.cornerBL] : [o.corner];
+                const verhaeltnisse = farben.map((c) => contrastRatio(c, ref));
+                const min = Math.min.apply(null, verhaeltnisse);
+
+                if (min < 4.5) {
+                    if (!confirm('Die Ecken-Farbe hat nur ' + min.toFixed(1) + ':1 Kontrast zum Hintergrund.\n' +
                         'Finder-Muster brauchen mindestens 4,5:1, sonst erkennen Scanner den Code evtl. nicht.\n\n' +
                         'Trotzdem fortfahren?')) {
                         switchTab('design', document.querySelectorAll('.tab')[1]);
