@@ -13,9 +13,7 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        html {
-            -webkit-text-size-adjust: 100%;
-        }
+        html { -webkit-text-size-adjust: 100%; }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -80,18 +78,12 @@
             font-weight: 600;
         }
 
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
 
         /* ===== FORM ===== */
-        .form-group {
-            margin-bottom: 20px;
-        }
+        .form-group { margin-bottom: 20px; }
+        .form-group.tight { margin-bottom: 12px; }
 
         label {
             display: block;
@@ -101,10 +93,17 @@
             font-size: 14px;
         }
 
+        .label-sm {
+            font-size: 12px;
+            font-weight: normal;
+            color: #666;
+        }
+
         input[type="text"],
         input[type="password"],
         input[type="email"],
         input[type="tel"],
+        input[type="url"],
         input[type="file"],
         select,
         textarea {
@@ -118,6 +117,7 @@
             background: white;
             -webkit-appearance: none;
             appearance: none;
+            color: #333;
         }
 
         select {
@@ -128,17 +128,21 @@
             padding-right: 40px;
         }
 
-        textarea {
-            resize: vertical;
-            min-height: 70px;
-        }
+        textarea { resize: vertical; min-height: 70px; }
 
-        input:focus,
-        select:focus,
-        textarea:focus {
+        input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: #667eea;
         }
+
+        /* 2 Spalten, auf Mobil 1 */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .grid-2 .full { grid-column: 1 / -1; }
 
         /* ===== COLORS ===== */
         .color-group {
@@ -147,10 +151,7 @@
             align-items: flex-start;
         }
 
-        .color-group > div {
-            flex: 1;
-            min-width: 0;
-        }
+        .color-group > div { flex: 1; min-width: 0; }
 
         .color-group input[type="color"] {
             width: 100%;
@@ -191,22 +192,11 @@
             flex-shrink: 0;
         }
 
-        button.preset:hover {
-            transform: scale(1.1);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-        }
-
-        button.preset:focus-visible {
-            outline: 3px solid #667eea;
-            outline-offset: 2px;
-        }
+        button.preset:hover { transform: scale(1.1); box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+        button.preset:focus-visible { outline: 3px solid #667eea; outline-offset: 2px; }
 
         /* ===== SLIDER ===== */
-        .slider-group {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
+        .slider-group { display: flex; align-items: center; gap: 15px; }
 
         .slider-group input[type="range"] {
             flex: 1;
@@ -219,43 +209,27 @@
         }
 
         .slider-group input[type="range"]::-webkit-slider-runnable-track {
-            height: 6px;
-            background: #e0e0e0;
-            border-radius: 3px;
+            height: 6px; background: #e0e0e0; border-radius: 3px;
         }
 
         .slider-group input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 24px;
-            height: 24px;
-            margin-top: -9px;
-            border-radius: 50%;
-            background: #667eea;
-            box-shadow: 0 2px 6px rgba(102,126,234,0.5);
+            -webkit-appearance: none; appearance: none;
+            width: 24px; height: 24px; margin-top: -9px; border-radius: 50%;
+            background: #667eea; box-shadow: 0 2px 6px rgba(102,126,234,0.5);
         }
 
         .slider-group input[type="range"]::-moz-range-track {
-            height: 6px;
-            background: #e0e0e0;
-            border-radius: 3px;
+            height: 6px; background: #e0e0e0; border-radius: 3px;
         }
 
         .slider-group input[type="range"]::-moz-range-thumb {
-            width: 24px;
-            height: 24px;
-            border: none;
-            border-radius: 50%;
-            background: #667eea;
-            box-shadow: 0 2px 6px rgba(102,126,234,0.5);
+            width: 24px; height: 24px; border: none; border-radius: 50%;
+            background: #667eea; box-shadow: 0 2px 6px rgba(102,126,234,0.5);
         }
 
         .slider-value {
-            min-width: 60px;
-            text-align: center;
-            font-weight: 600;
-            color: #667eea;
-            font-size: 14px;
+            min-width: 60px; text-align: center; font-weight: 600;
+            color: #667eea; font-size: 14px;
         }
 
         /* ===== CHECKBOX ===== */
@@ -263,22 +237,22 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 14px;
             min-height: 24px;
         }
 
         .checkbox-group input[type="checkbox"] {
-            width: 22px;
-            height: 22px;
-            cursor: pointer;
-            flex-shrink: 0;
-            accent-color: #667eea;
+            width: 22px; height: 22px; cursor: pointer;
+            flex-shrink: 0; accent-color: #667eea;
         }
 
-        .checkbox-group label {
-            margin: 0;
-            font-weight: normal;
-            cursor: pointer;
+        .checkbox-group label { margin: 0; font-weight: normal; cursor: pointer; }
+
+        .hint {
+            font-size: 12px;
+            color: #8a8f98;
+            margin-top: 6px;
+            line-height: 1.4;
         }
 
         /* ===== BUTTONS ===== */
@@ -298,54 +272,43 @@
             touch-action: manipulation;
         }
 
-        button:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
-        }
+        button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4); }
+        button:active:not(:disabled) { transform: translateY(0); }
+        button:disabled { opacity: 0.6; cursor: not-allowed; }
 
-        button:active:not(:disabled) {
-            transform: translateY(0);
-        }
+        .download-btn { background: #28a745; }
+        .download-btn:hover:not(:disabled) { box-shadow: 0 10px 20px rgba(40, 167, 69, 0.4); }
 
-        button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .download-btn {
-            background: #28a745;
-        }
-
-        .download-btn:hover:not(:disabled) {
-            box-shadow: 0 10px 20px rgba(40, 167, 69, 0.4);
-        }
+        .svg-btn { background: #0d6efd; }
+        .svg-btn:hover:not(:disabled) { box-shadow: 0 10px 20px rgba(13, 110, 253, 0.4); }
 
         /* ===== RESULT ===== */
-        .qr-result {
-            margin-top: 30px;
-            text-align: center;
-            display: none;
-        }
+        .qr-result { margin-top: 30px; text-align: center; display: none; }
+        .qr-result.show { display: block; }
 
-        .qr-result.show {
-            display: block;
-        }
-
-        #qrcode {
+        #qrBox {
             display: inline-block;
             padding: 20px;
-            background: white;
             border-radius: 10px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             max-width: 100%;
+            /* Schachbrett nur sichtbar, wenn der Hintergrund transparent ist */
+            background: #fff;
         }
 
-        #qrcode canvas,
-        #qrcode img {
-            max-width: 100%;
-            height: auto;
-            display: block;
+        #qrBox.transparent {
+            background-color: #fff;
+            background-image:
+                linear-gradient(45deg, #e9ecef 25%, transparent 25%, transparent 75%, #e9ecef 75%),
+                linear-gradient(45deg, #e9ecef 25%, transparent 25%, transparent 75%, #e9ecef 75%);
+            background-size: 16px 16px;
+            background-position: 0 0, 8px 8px;
         }
+
+        #qrCanvas { display: block; max-width: 100%; height: auto; }
+
+        .result-actions { display: flex; gap: 10px; margin-top: 15px; }
+        .result-actions button { margin-bottom: 0; font-size: 15px; padding: 14px 10px; }
 
         /* ===== INFO ===== */
         .info {
@@ -357,14 +320,8 @@
             color: #666;
         }
 
-        .info ul {
-            margin-left: 20px;
-            margin-top: 10px;
-        }
-
-        .info li {
-            margin-bottom: 6px;
-        }
+        .info ul { margin-left: 20px; margin-top: 10px; }
+        .info li { margin-bottom: 6px; }
 
         /* ===== LOGO ===== */
         .logo-preview {
@@ -401,9 +358,7 @@
             line-height: 1;
         }
 
-        .remove-logo.show {
-            display: flex;
-        }
+        .remove-logo.show { display: flex; }
 
         /* ===== ERROR ===== */
         .error-msg {
@@ -413,24 +368,12 @@
             display: none;
         }
 
-        .error-msg.show {
-            display: block;
-        }
+        .error-msg.show { display: block; }
 
         /* ===== PASSWORD TOGGLE ===== */
-        .password-toggle {
-            position: relative;
-        }
-
-        .password-toggle input {
-            padding-right: 52px;
-        }
-
-        .password-toggle input:disabled {
-            background: #f1f3f5;
-            color: #adb5bd;
-            cursor: not-allowed;
-        }
+        .password-toggle { position: relative; }
+        .password-toggle input { padding-right: 52px; }
+        .password-toggle input:disabled { background: #f1f3f5; color: #adb5bd; cursor: not-allowed; }
 
         .password-toggle button {
             position: absolute;
@@ -458,39 +401,18 @@
            RESPONSIVE: TABLET (max 768px)
            ===================================================== */
         @media (max-width: 768px) {
-            body {
-                padding: 14px;
-                align-items: flex-start;
-            }
-
-            .container {
-                padding: 26px 22px;
-                border-radius: 16px;
-                margin: 0 auto;
-            }
-
-            h1 {
-                font-size: 26px;
-            }
-
-            .subtitle {
-                font-size: 13px;
-                margin-bottom: 22px;
-            }
-
-            #qrcode {
-                padding: 14px;
-            }
+            body { padding: 14px; align-items: flex-start; }
+            .container { padding: 26px 22px; border-radius: 16px; margin: 0 auto; }
+            h1 { font-size: 26px; }
+            .subtitle { font-size: 13px; margin-bottom: 22px; }
+            #qrBox { padding: 14px; }
         }
 
         /* =====================================================
            RESPONSIVE: HANDY (max 480px)
            ===================================================== */
         @media (max-width: 480px) {
-            body {
-                padding: 0;
-                align-items: stretch;
-            }
+            body { padding: 0; align-items: stretch; }
 
             .container {
                 border-radius: 0;
@@ -500,14 +422,8 @@
                 box-shadow: none;
             }
 
-            h1 {
-                font-size: 22px;
-            }
-
-            .subtitle {
-                font-size: 12px;
-                margin-bottom: 18px;
-            }
+            h1 { font-size: 22px; }
+            .subtitle { font-size: 12px; margin-bottom: 18px; }
 
             .tabs {
                 gap: 4px;
@@ -519,134 +435,71 @@
                 padding-top: 4px;
             }
 
-            .tab {
-                padding: 12px 4px;
-                font-size: 14px;
-            }
+            .tab { padding: 12px 4px; font-size: 14px; }
 
-            .form-group {
-                margin-bottom: 16px;
-            }
+            .form-group { margin-bottom: 16px; }
+            label { font-size: 13px; }
 
-            label {
-                font-size: 13px;
-            }
-
-            input[type="text"],
-            input[type="password"],
-            input[type="file"],
-            select,
-            textarea {
+            input[type="text"], input[type="password"], input[type="email"],
+            input[type="tel"], input[type="url"], input[type="file"],
+            select, textarea {
                 padding: 13px 12px;
-                font-size: 16px; /* 16px verhindert iOS-Zoom */
+                font-size: 16px; /* verhindert iOS-Zoom */
             }
 
-            button {
-                padding: 15px;
-                font-size: 16px;
-            }
+            button { padding: 15px; font-size: 16px; }
 
-            /* Farbwahl: untereinander, damit die Picker groß bleiben */
-            .color-group {
-                flex-direction: column;
-                gap: 12px;
-            }
+            /* vCard-Felder untereinander */
+            .grid-2 { grid-template-columns: 1fr; gap: 12px; }
 
-            .color-group > div {
-                width: 100%;
-            }
+            .color-group { flex-direction: column; gap: 12px; }
+            .color-group > div { width: 100%; }
+            .color-group input[type="color"] { height: 52px; }
 
-            .color-group input[type="color"] {
-                height: 52px;
-            }
+            button.preset { width: 46px; height: 46px; min-width: 46px; }
 
-            button.preset {
-                width: 46px;
-                height: 46px;
-                min-width: 46px;
-            }
+            .slider-value { min-width: 52px; font-size: 13px; }
 
-            .slider-value {
-                min-width: 52px;
-                font-size: 13px;
-            }
+            #qrBox { padding: 10px; }
 
-            #qrcode {
-                padding: 10px;
-            }
+            .result-actions { flex-direction: column; gap: 8px; }
 
-            .info {
-                font-size: 12px;
-                padding: 12px;
-            }
+            .info { font-size: 12px; padding: 12px; }
+            .info ul { margin-left: 16px; }
 
-            .info ul {
-                margin-left: 16px;
-            }
-
-            .logo-preview img {
-                max-width: 80px;
-                max-height: 80px;
-            }
-
-            .remove-logo {
-                right: calc(50% - 40px);
-            }
+            .logo-preview img { max-width: 80px; max-height: 80px; }
+            .remove-logo { right: calc(50% - 40px); }
         }
 
         /* =====================================================
            RESPONSIVE: SEHR KLEIN (max 360px)
            ===================================================== */
         @media (max-width: 360px) {
-            h1 {
-                font-size: 19px;
-            }
-
-            .tab {
-                font-size: 13px;
-                padding: 11px 2px;
-            }
+            h1 { font-size: 19px; }
+            .tab { font-size: 13px; padding: 11px 2px; }
         }
 
         /* =====================================================
-           QUERFORMAT HANDY (niedrige Höhe)
+           QUERFORMAT HANDY
            ===================================================== */
         @media (max-height: 500px) and (orientation: landscape) {
-            body {
-                align-items: flex-start;
-                padding: 10px;
-            }
-
-            .container {
-                padding: 18px;
-            }
-
-            h1 {
-                font-size: 20px;
-            }
-
-            .subtitle {
-                display: none;
-            }
+            body { align-items: flex-start; padding: 10px; }
+            .container { padding: 18px; }
+            h1 { font-size: 20px; }
+            .subtitle { display: none; }
         }
 
         /* =====================================================
-           GROSSE BILDSCHIRME (Desktop ab 1200px)
+           GROSSE BILDSCHIRME
            ===================================================== */
         @media (min-width: 1200px) {
-            .container {
-                max-width: 640px;
-                padding: 46px;
-            }
+            .container { max-width: 640px; padding: 46px; }
         }
 
         /* Hover-Effekte nur auf Geräten mit Maus */
         @media (hover: none) {
             .preset:hover,
-            button:hover:not(:disabled) {
-                transform: none;
-                box-shadow: none;
-            }
+            button:hover:not(:disabled) { transform: none; box-shadow: none; }
 
             /* Bugfix: Der 👁️-Button wird über translateY(-50%) zentriert.
                Diese Regel steht nach dem generischen Reset, damit die
@@ -672,14 +525,10 @@
         <!-- Tab: Inhalt -->
         <div id="content" class="tab-content active">
             <div class="form-group">
-                <label for="text">Text oder URL:</label>
-                <input type="text" id="text" placeholder="z.B. https://meine-website.de" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" />
-            </div>
-
-            <div class="form-group">
                 <label for="qrType">QR-Code Typ:</label>
                 <select id="qrType">
                     <option value="text">Text/URL</option>
+                    <option value="vcard">vCard (Kontakt)</option>
                     <option value="wifi">WiFi (SSID + Passwort)</option>
                     <option value="email">E-Mail</option>
                     <option value="phone">Telefonnummer</option>
@@ -687,7 +536,46 @@
                 </select>
             </div>
 
-            <div id="wifiFields" style="display: none;">
+            <div id="textFields" class="fields">
+                <div class="form-group">
+                    <label for="text">Text oder URL:</label>
+                    <input type="text" id="text" placeholder="z.B. https://meine-website.de" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" />
+                </div>
+            </div>
+
+            <!-- vCard -->
+            <div id="vcardFields" class="fields" style="display: none;">
+                <div class="grid-2">
+                    <div class="form-group tight">
+                        <label for="vcFirst">Vorname:</label>
+                        <input type="text" id="vcFirst" placeholder="Max" autocomplete="off" />
+                    </div>
+                    <div class="form-group tight">
+                        <label for="vcLast">Nachname:</label>
+                        <input type="text" id="vcLast" placeholder="Mustermann" autocomplete="off" />
+                    </div>
+                    <div class="form-group tight">
+                        <label for="vcTel">Telefon:</label>
+                        <input type="tel" id="vcTel" placeholder="+49 123 456789" inputmode="tel" autocomplete="off" />
+                    </div>
+                    <div class="form-group tight">
+                        <label for="vcEmail">E-Mail:</label>
+                        <input type="email" id="vcEmail" placeholder="max@example.com" inputmode="email" autocomplete="off" autocapitalize="off" spellcheck="false" />
+                    </div>
+                    <div class="form-group tight">
+                        <label for="vcOrg">Firma:</label>
+                        <input type="text" id="vcOrg" placeholder="Musterfirma GmbH" autocomplete="off" />
+                    </div>
+                    <div class="form-group tight">
+                        <label for="vcUrl">Webadresse:</label>
+                        <input type="text" id="vcUrl" placeholder="https://meine-website.de" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" />
+                    </div>
+                </div>
+                <div class="error-msg" id="vcardError">Bitte mindestens Vor- oder Nachname ausfüllen</div>
+                <div class="hint">Wird als vCard 3.0 gespeichert – Kontakte lassen sich direkt im Adressbuch ablegen.</div>
+            </div>
+
+            <div id="wifiFields" class="fields" style="display: none;">
                 <div class="form-group">
                     <label for="ssid">Netzwerkname (SSID):</label>
                     <input type="text" id="ssid" placeholder="MeinWLAN" autocomplete="off" autocapitalize="off" spellcheck="false" />
@@ -710,7 +598,7 @@
                 </div>
             </div>
 
-            <div id="emailFields" style="display: none;">
+            <div id="emailFields" class="fields" style="display: none;">
                 <div class="form-group">
                     <label for="email">E-Mail-Adresse:</label>
                     <input type="email" id="email" placeholder="info@example.com" inputmode="email" autocomplete="off" autocapitalize="off" spellcheck="false" />
@@ -726,7 +614,7 @@
                 </div>
             </div>
 
-            <div id="phoneFields" style="display: none;">
+            <div id="phoneFields" class="fields" style="display: none;">
                 <div class="form-group">
                     <label for="phone">Telefonnummer:</label>
                     <input type="tel" id="phone" placeholder="+49 123 456789" inputmode="tel" />
@@ -734,7 +622,7 @@
                 </div>
             </div>
 
-            <div id="smsFields" style="display: none;">
+            <div id="smsFields" class="fields" style="display: none;">
                 <div class="form-group">
                     <label for="smsPhone">Telefonnummer:</label>
                     <input type="tel" id="smsPhone" placeholder="+49 123 456789" inputmode="tel" />
@@ -753,12 +641,12 @@
                 <label>Farben:</label>
                 <div class="color-group">
                     <div>
-                        <label for="darkColor" style="font-size: 12px; font-weight: normal;">Dunkel (Module):</label>
+                        <label for="darkColor" class="label-sm">Dunkel (Module):</label>
                         <input type="color" id="darkColor" value="#000000" />
                         <div class="color-value" id="darkColorValue">#000000</div>
                     </div>
                     <div>
-                        <label for="lightColor" style="font-size: 12px; font-weight: normal;">Hell (Hintergrund):</label>
+                        <label for="lightColor" class="label-sm">Hell (Hintergrund):</label>
                         <input type="color" id="lightColor" value="#ffffff" />
                         <div class="color-value" id="lightColorValue">#FFFFFF</div>
                     </div>
@@ -786,7 +674,7 @@
             </div>
 
             <div class="form-group">
-                <label>Fehlerkorrektur:</label>
+                <label for="errorCorrection">Fehlerkorrektur:</label>
                 <select id="errorCorrection">
                     <option value="L">Niedrig (7%)</option>
                     <option value="M">Mittel (15%)</option>
@@ -794,13 +682,33 @@
                     <option value="H" selected>Sehr hoch (30%) – empfohlen für Logos</option>
                 </select>
             </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="transparentBg" />
+                <label for="transparentBg">Transparenter Hintergrund</label>
+            </div>
+            <div class="hint" style="margin-top:-6px; margin-bottom:16px;">
+                PNG und SVG behalten die Transparenz. Der Code ist dann nur auf hellem Untergrund lesbar.
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="cornerEnabled" />
+                <label for="cornerEnabled">Ecken (Finder-Muster) anders einfärben</label>
+            </div>
+            <div class="color-group" id="cornerColorRow" style="display:none; margin-bottom:16px;">
+                <div>
+                    <label for="cornerColor" class="label-sm">Ecken-Farbe:</label>
+                    <input type="color" id="cornerColor" value="#667eea" />
+                    <div class="color-value" id="cornerColorValue">#667EEA</div>
+                </div>
+            </div>
         </div>
 
         <!-- Tab: Logo -->
         <div id="logo" class="tab-content">
             <div class="form-group">
-                <label for="logo">Logo hochladen:</label>
-                <input type="file" id="logo" accept="image/*" />
+                <label for="logoFile">Logo hochladen:</label>
+                <input type="file" id="logoFile" accept="image/*" />
                 <div class="logo-preview" id="logoPreview">
                     <button class="remove-logo" id="removeLogo" onclick="removeLogo()" title="Logo entfernen">✕</button>
                 </div>
@@ -816,7 +724,7 @@
 
             <div class="checkbox-group">
                 <input type="checkbox" id="logoBorder" checked />
-                <label for="logoBorder">Weißer Rand um Logo</label>
+                <label for="logoBorder">Hintergrund hinter Logo (passend zur Hintergrundfarbe)</label>
             </div>
 
             <div class="checkbox-group">
@@ -828,8 +736,13 @@
         <button onclick="generateQR()" id="generateBtn">✨ QR-Code generieren</button>
 
         <div class="qr-result" id="result">
-            <div id="qrcode"></div>
-            <button class="download-btn" onclick="downloadQR()">⬇️ QR-Code herunterladen (PNG)</button>
+            <div id="qrBox">
+                <canvas id="qrCanvas" width="256" height="256" role="img" aria-label="Generierter QR-Code"></canvas>
+            </div>
+            <div class="result-actions">
+                <button class="download-btn" onclick="downloadQR('png')">⬇️ PNG</button>
+                <button class="svg-btn" onclick="downloadQR('svg')">⬇️ SVG (verlustfrei)</button>
+            </div>
         </div>
 
         <div class="info">
@@ -837,20 +750,27 @@
             <ul>
                 <li>Logo sollte quadratisch sein (z.B. 200x200px)</li>
                 <li>Hohe Fehlerkorrektur = Logo kann größer sein</li>
+                <li>vCard: mindestens Vor- oder Nachname angeben</li>
+                <li>SVG eignet sich für Druck, Plakate und beliebige Skalierung</li>
                 <li>Alle Daten bleiben lokal – nichts wird gesendet</li>
-                <li>WiFi-QR-Codes funktionieren mit iPhone/Android Kamera</li>
             </ul>
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- QR-Encoder: lokal eingebunden, keine externen Requests -->
+    <script src="qrcode.js"></script>
 
     <script>
-        let qrCode = null;
+        // KRITISCH: qrcode.js nutzt standardmäßig Latin-1 (charCodeAt & 0xff).
+        // Umlaute/UTF-8-Zeichen würden damit unlesbare QR-Codes erzeugen.
+        qrcode.stringToBytes = qrcode.stringToBytesFuncs['UTF-8'];
+
         let logoImage = null;
         let isGenerating = false;
+        let lastSVG = null;
 
-        // Tab-Wechsel
+        /* ================= Helpers ================= */
+
         function switchTab(tabName, element) {
             document.querySelectorAll('.tab').forEach(t => {
                 t.classList.remove('active');
@@ -862,117 +782,123 @@
             document.getElementById(tabName).classList.add('active');
         }
 
-        // QR-Typ ändern
-        document.getElementById('qrType').addEventListener('change', function() {
-            const type = this.value;
-            ['wifi', 'email', 'phone', 'sms'].forEach(t => {
-                document.getElementById(t + 'Fields').style.display = 'none';
-            });
-            if (type !== 'text') {
-                document.getElementById(type + 'Fields').style.display = 'block';
-            }
-            document.querySelectorAll('.error-msg').forEach(e => e.classList.remove('show'));
-        });
-
-        // Bugfix: bei "keine Verschlüsselung" wird kein Passwort benötigt
-        document.getElementById('encryption').addEventListener('change', function() {
-            const istOffen = this.value === 'nopass';
-            const pw = document.getElementById('password');
-            pw.disabled = istOffen;
-            if (istOffen) pw.value = '';
-            pw.placeholder = istOffen ? 'nicht nötig (offenes Netz)' : 'geheim123';
-        });
-
-        // Slider-Werte aktualisieren
-        document.getElementById('size').addEventListener('input', function() {
-            document.getElementById('sizeValue').textContent = this.value + 'px';
-        });
-
-        document.getElementById('logoSize').addEventListener('input', function() {
-            document.getElementById('logoSizeValue').textContent = this.value + '%';
-        });
-
-        // Farbwerte anzeigen
-        ['darkColor', 'lightColor'].forEach(id => {
-            const input = document.getElementById(id);
-            const valueEl = document.getElementById(id + 'Value');
-            input.addEventListener('input', function() {
-                valueEl.textContent = this.value.toUpperCase();
-            });
-        });
-
-        // Logo-Vorschau
-        document.getElementById('logo').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            if (!file.type.startsWith('image/')) {
-                alert('Bitte wähle eine Bilddatei!');
-                e.target.value = '';
-                return;
-            }
-            if (file.size > 5 * 1024 * 1024) {
-                alert('Logo darf max. 5MB groß sein!');
-                e.target.value = '';
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const img = new Image();
-                img.onload = function() {
-                    logoImage = img;
-                    const preview = document.getElementById('logoPreview');
-                    preview.innerHTML = `<img src="${event.target.result}" alt="Logo Vorschau" /><button class="remove-logo show" id="removeLogo" onclick="removeLogo()" title="Logo entfernen">✕</button>`;
-                };
-                img.onerror = function() {
-                    alert('Logo konnte nicht geladen werden!');
-                    logoImage = null;
-                };
-                img.src = event.target.result;
-            };
-            reader.readAsDataURL(file);
-        });
-
-        // Logo entfernen
-        function removeLogo() {
-            logoImage = null;
-            document.getElementById('logo').value = '';
-            document.getElementById('logoPreview').innerHTML = '<button class="remove-logo" id="removeLogo" onclick="removeLogo()" title="Logo entfernen">✕</button>';
-
-            // Bugfix: Vorschau sofort aktualisieren, damit kein veraltetes Logo
-            // im angezeigten (und herunterladbaren) QR-Code zurückbleibt
-            if (document.getElementById('result').classList.contains('show')) {
-                generateQR();
-            }
+        function showError(id, show) {
+            const el = document.getElementById(id);
+            if (el) el.classList.toggle('show', show);
         }
 
-        // Passwort anzeigen/verstecken
-        function togglePassword() {
-            const input = document.getElementById('password');
-            input.type = input.type === 'password' ? 'text' : 'password';
-        }
-
-        // Farb-Preset anwenden
-        function applyPreset(dark, light) {
-            document.getElementById('darkColor').value = dark;
-            document.getElementById('lightColor').value = light;
-            document.getElementById('darkColorValue').textContent = dark.toUpperCase();
-            document.getElementById('lightColorValue').textContent = light.toUpperCase();
-        }
-
-        // WiFi-Escaping
         function escapeWifi(str) {
             return str.replace(/([\\;,:"'])/g, '\\$1');
         }
 
-        // E-Mail Validierung
         function isValidEmail(email) {
             return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
         }
 
-        // Bugfix: Kontrast zwischen Modul- und Hintergrundfarbe prüfen
-        // (identische Farben reichen als Prüfung nicht aus)
+        /* ================= vCard 3.0 ================= */
+
+        // RFC 6350/2426: \ , ; und Zeilenumbrüche müssen escaped werden
+        function vCardEscape(value) {
+            return String(value)
+                .replace(/\\/g, '\\\\')
+                .replace(/;/g, '\\;')
+                .replace(/,/g, '\\,')
+                .replace(/\r?\n/g, '\\n');
+        }
+
+        function buildVCard() {
+            const first = document.getElementById('vcFirst').value.trim();
+            const last  = document.getElementById('vcLast').value.trim();
+            const tel   = document.getElementById('vcTel').value.trim();
+            const mail  = document.getElementById('vcEmail').value.trim();
+            const org   = document.getElementById('vcOrg').value.trim();
+            const url   = document.getElementById('vcUrl').value.trim();
+
+            if (!first && !last) {
+                showError('vcardError', true);
+                return null;
+            }
+            if (mail && !isValidEmail(mail)) {
+                showError('vcardError', true);
+                document.getElementById('vcardError').textContent = 'Bitte eine gültige E-Mail-Adresse eingeben';
+                return null;
+            }
+            showError('vcardError', false);
+            document.getElementById('vcardError').textContent = 'Bitte mindestens Vor- oder Nachname ausfüllen';
+
+            const lines = [
+                'BEGIN:VCARD',
+                'VERSION:3.0',
+                `N:${vCardEscape(last)};${vCardEscape(first)};;;`,
+                `FN:${vCardEscape((first + ' ' + last).trim())}`
+            ];
+            if (org)  lines.push('ORG:' + vCardEscape(org));
+            if (tel)  lines.push('TEL;TYPE=CELL:' + vCardEscape(tel));
+            if (mail) lines.push('EMAIL;TYPE=INTERNET:' + vCardEscape(mail));
+            if (url)  lines.push('URL:' + vCardEscape(url));
+            lines.push('END:VCARD');
+
+            // vCard verlangt CRLF als Zeilentrenner
+            return lines.join('\r\n');
+        }
+
+        /* ================= Inhalt erzeugen ================= */
+
+        function getQRText() {
+            const type = document.getElementById('qrType').value;
+
+            switch (type) {
+                case 'text': {
+                    const text = document.getElementById('text').value.trim();
+                    if (!text) { alert('Bitte gib einen Text oder eine URL ein!'); return null; }
+                    return text;
+                }
+                case 'vcard':
+                    return buildVCard();
+
+                case 'wifi': {
+                    const ssid = document.getElementById('ssid').value.trim();
+                    const password = document.getElementById('password').value;
+                    const encryption = document.getElementById('encryption').value;
+                    if (!ssid) { showError('ssidError', true); return null; }
+                    showError('ssidError', false);
+                    if (encryption === 'nopass') return `WIFI:S:${escapeWifi(ssid)};T:nopass;;`;
+                    return `WIFI:S:${escapeWifi(ssid)};T:${encryption};P:${escapeWifi(password)};;`;
+                }
+                case 'email': {
+                    const email = document.getElementById('email').value.trim();
+                    const subject = document.getElementById('subject').value.trim();
+                    const body = document.getElementById('body').value.trim();
+                    if (!email || !isValidEmail(email)) { showError('emailError', true); return null; }
+                    showError('emailError', false);
+                    let mailto = `mailto:${email}`;
+                    const params = [];
+                    if (subject) params.push(`subject=${encodeURIComponent(subject)}`);
+                    if (body) params.push(`body=${encodeURIComponent(body)}`);
+                    if (params.length) mailto += '?' + params.join('&');
+                    return mailto;
+                }
+                case 'phone': {
+                    const phone = document.getElementById('phone').value.trim();
+                    if (!phone) { showError('phoneError', true); return null; }
+                    showError('phoneError', false);
+                    return `tel:${phone}`;
+                }
+                case 'sms': {
+                    const smsPhone = document.getElementById('smsPhone').value.trim();
+                    const smsMessage = document.getElementById('smsMessage').value.trim();
+                    if (!smsPhone) { showError('smsPhoneError', true); return null; }
+                    showError('smsPhoneError', false);
+                    if (smsMessage) return `sms:${smsPhone}?body=${encodeURIComponent(smsMessage)}`;
+                    return `sms:${smsPhone}`;
+                }
+                default:
+                    return null;
+            }
+        }
+
+        /* ================= Kontrast ================= */
+
         function hexToRgb(hex) {
             const h = hex.replace('#', '');
             const full = h.length === 3 ? h.split('').map(c => c + c).join('') : h;
@@ -999,264 +925,415 @@
             return (hell + 0.05) / (dunkel + 0.05);
         }
 
-        // Fehlermeldung anzeigen/verstecken
-        function showError(id, show) {
-            const el = document.getElementById(id);
-            if (el) el.classList.toggle('show', show);
+        /* ================= QR erzeugen ================= */
+
+        const QUIET = 4; // Ruhezone in Modulen (QR-Spezifikation)
+
+        function buildQR(text, ecLevel) {
+            let lastErr = null;
+            for (let typeNumber = 1; typeNumber <= 40; typeNumber++) {
+                try {
+                    const qr = qrcode(typeNumber, ecLevel);
+                    qr.addData(text);
+                    qr.make();
+                    return qr;
+                } catch (e) {
+                    lastErr = e;
+                    // 'code length overflow' -> nächste (größere) Version probieren
+                    if (!(typeof e === 'string' && e.indexOf('overflow') !== -1)) throw e;
+                }
+            }
+            throw lastErr || new Error('Inhalt zu lang für einen QR-Code.');
         }
 
-        // QR-Text generieren
-        function getQRText() {
-            const type = document.getElementById('qrType').value;
+        // Findet die drei 7x7-Finder-Muster
+        function isFinder(row, col, count) {
+            return (row < 7 && col < 7) ||
+                   (row < 7 && col >= count - 7) ||
+                   (row >= count - 7 && col < 7);
+        }
 
-            switch (type) {
-                case 'text': {
-                    const text = document.getElementById('text').value.trim();
-                    if (!text) {
-                        alert('Bitte gib einen Text oder eine URL ein!');
-                        return null;
-                    }
-                    return text;
-                }
-                case 'wifi': {
-                    const ssid = document.getElementById('ssid').value.trim();
-                    const password = document.getElementById('password').value;
-                    const encryption = document.getElementById('encryption').value;
+        function readOptions() {
+            const transparent = document.getElementById('transparentBg').checked;
+            return {
+                size: parseInt(document.getElementById('size').value, 10),
+                dark: document.getElementById('darkColor').value,
+                light: document.getElementById('lightColor').value,
+                transparent: transparent,
+                cornerEnabled: document.getElementById('cornerEnabled').checked,
+                corner: document.getElementById('cornerColor').value,
+                logo: logoImage,
+                logoSize: parseInt(document.getElementById('logoSize').value, 10) / 100,
+                logoBg: document.getElementById('logoBorder').checked,
+                logoShadow: document.getElementById('logoShadow').checked
+            };
+        }
 
-                    if (!ssid) {
-                        showError('ssidError', true);
-                        return null;
-                    }
-                    showError('ssidError', false);
+        function drawToCanvas(qr, o) {
+            const canvas = document.getElementById('qrCanvas');
+            const ctx = canvas.getContext('2d');
+            const count = qr.getModuleCount();
+            const total = count + QUIET * 2;
+            const scale = Math.max(1, Math.floor(o.size / total));
+            const px = total * scale;
 
-                    // Bugfix: offene Netze ("nopass") dürfen kein P:-Feld enthalten
-                    if (encryption === 'nopass') {
-                        return `WIFI:S:${escapeWifi(ssid)};T:nopass;;`;
-                    }
-                    return `WIFI:S:${escapeWifi(ssid)};T:${encryption};P:${escapeWifi(password)};;`;
-                }
-                case 'email': {
-                    const email = document.getElementById('email').value.trim();
-                    const subject = document.getElementById('subject').value.trim();
-                    const body = document.getElementById('body').value.trim();
+            canvas.width = px;
+            canvas.height = px;
 
-                    if (!email || !isValidEmail(email)) {
-                        showError('emailError', true);
-                        return null;
-                    }
-                    showError('emailError', false);
+            // Hintergrund
+            ctx.clearRect(0, 0, px, px);
+            if (!o.transparent) {
+                ctx.fillStyle = o.light;
+                ctx.fillRect(0, 0, px, px);
+            }
 
-                    let mailto = `mailto:${email}`;
-                    const params = [];
-                    if (subject) params.push(`subject=${encodeURIComponent(subject)}`);
-                    if (body) params.push(`body=${encodeURIComponent(body)}`);
-                    if (params.length > 0) mailto += '?' + params.join('&');
-                    return mailto;
+            for (let row = 0; row < count; row++) {
+                for (let col = 0; col < count; col++) {
+                    if (!qr.isDark(row, col)) continue;
+                    const finder = isFinder(row, col, count);
+                    ctx.fillStyle = (finder && o.cornerEnabled) ? o.corner : o.dark;
+                    ctx.fillRect((col + QUIET) * scale, (row + QUIET) * scale, scale, scale);
                 }
-                case 'phone': {
-                    const phone = document.getElementById('phone').value.trim();
-                    if (!phone) {
-                        showError('phoneError', true);
-                        return null;
-                    }
-                    showError('phoneError', false);
-                    return `tel:${phone}`;
-                }
-                case 'sms': {
-                    const smsPhone = document.getElementById('smsPhone').value.trim();
-                    const smsMessage = document.getElementById('smsMessage').value.trim();
-                    if (!smsPhone) {
-                        showError('smsPhoneError', true);
-                        return null;
-                    }
-                    showError('smsPhoneError', false);
-                    if (smsMessage) {
-                        return `sms:${smsPhone}?body=${encodeURIComponent(smsMessage)}`;
-                    }
-                    return `sms:${smsPhone}`;
-                }
-                default:
-                    return null;
+            }
+
+            if (o.logo) {
+                drawLogo(ctx, px, o);
             }
         }
 
+        function drawLogo(ctx, px, o) {
+            const logoSize = px * o.logoSize;
+            const x = (px - logoSize) / 2;
+            const y = (px - logoSize) / 2;
+
+            if (o.logoShadow) {
+                ctx.shadowColor = 'rgba(0,0,0,0.4)';
+                ctx.shadowBlur = 12;
+                ctx.shadowOffsetX = 3;
+                ctx.shadowOffsetY = 3;
+            }
+
+            if (o.logoBg) {
+                ctx.shadowColor = 'transparent';
+                ctx.shadowBlur = 0;
+                ctx.shadowOffsetX = 0;
+                ctx.shadowOffsetY = 0;
+                ctx.fillStyle = o.transparent ? '#ffffff' : o.light;
+                const pad = Math.max(4, px * 0.02);
+                ctx.fillRect(x - pad, y - pad, logoSize + pad * 2, logoSize + pad * 2);
+            }
+
+            if (o.logoShadow) {
+                ctx.shadowColor = 'rgba(0,0,0,0.4)';
+                ctx.shadowBlur = 12;
+                ctx.shadowOffsetX = 3;
+                ctx.shadowOffsetY = 3;
+            }
+
+            ctx.drawImage(o.logo, x, y, logoSize, logoSize);
+
+            ctx.shadowColor = 'transparent';
+            ctx.shadowBlur = 0;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 0;
+        }
+
+        function buildSVG(qr, o) {
+            const count = qr.getModuleCount();
+            const total = count + QUIET * 2;
+            const parts = [];
+
+            parts.push(
+                `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" ` +
+                `width="${o.size}" height="${o.size}" ` +
+                `viewBox="0 0 ${total} ${total}" shape-rendering="crispEdges" role="img" aria-label="QR-Code">`
+            );
+
+            if (!o.transparent) {
+                parts.push(`<rect width="${total}" height="${total}" fill="${o.light}"/>`);
+            }
+
+            let darkPath = '';
+            let finderPath = '';
+
+            for (let row = 0; row < count; row++) {
+                for (let col = 0; col < count; col++) {
+                    if (!qr.isDark(row, col)) continue;
+                    const seg = `M${col + QUIET} ${row + QUIET}h1v1h-1z`;
+                    if (isFinder(row, col, count)) finderPath += seg;
+                    else darkPath += seg;
+                }
+            }
+
+            if (darkPath) parts.push(`<path d="${darkPath}" fill="${o.dark}"/>`);
+            if (finderPath) {
+                parts.push(`<path d="${finderPath}" fill="${(o.cornerEnabled ? o.corner : o.dark)}"/>`);
+            }
+
+            if (o.logo) {
+                const logoUnits = total * o.logoSize;
+                const lx = (total - logoUnits) / 2;
+                const ly = (total - logoUnits) / 2;
+
+                if (o.logoBg) {
+                    const pad = Math.max(0.2, total * 0.02);
+                    const bg = o.transparent ? '#ffffff' : o.light;
+                    parts.push(`<rect x="${lx - pad}" y="${ly - pad}" width="${logoUnits + pad * 2}" height="${logoUnits + pad * 2}" fill="${bg}"/>`);
+                }
+
+                // href (SVG2) + xlink:href (SVG1.1) für Druck-Programme
+                parts.push(
+                    `<image href="${o.logo.src}" xlink:href="${o.logo.src}" ` +
+                    `x="${lx}" y="${ly}" width="${logoUnits}" height="${logoUnits}" ` +
+                    `preserveAspectRatio="xMidYMid slice"/>`
+                );
+            }
+
+            parts.push('</svg>');
+            return parts.join('');
+        }
+
+        /* ================= Generieren ================= */
+
         function generateQR() {
             if (isGenerating) return;
-            if (typeof QRCode === 'undefined') {
-                alert('Fehler: QRCode-Bibliothek konnte nicht geladen werden. Bitte Internetverbindung prüfen.');
+            if (typeof qrcode !== 'function') {
+                alert('Fehler: QR-Bibliothek konnte nicht geladen werden (qrcode.js fehlt).');
                 return;
             }
 
             const text = getQRText();
             if (!text) return;
 
-            const darkColor = document.getElementById('darkColor').value;
-            const lightColor = document.getElementById('lightColor').value;
+            const o = readOptions();
 
-            // Bugfix: identische Farben = unsichtbarer QR-Code
-            if (darkColor.toLowerCase() === lightColor.toLowerCase()) {
-                alert('⚠️ Dunkel- und Hellfarbe sind identisch!\nDer QR-Code wäre unsichtbar und nicht scannbar.');
-                return;
-            }
-
-            // Bugfix: zu geringer Kontrast = nicht scannbar
-            const ratio = contrastRatio(darkColor, lightColor);
-            if (ratio < 3) {
-                alert(
-                    '⚠️ Der Kontrast zwischen den Farben ist zu gering (Verhältnis ' +
-                    ratio.toFixed(1) + ':1).\n\n' +
-                    'Ein QR-Code braucht einen starken Unterschied zwischen dunkel und hell, ' +
-                    'sonst erkennen Kameras ihn nicht. Bitte wähle deutlich hellere/dunklere Farben.'
-                );
-                switchTab('design', document.querySelectorAll('.tab')[1]);
-                return;
-            }
-            if (ratio < 5) {
-                const weiter = confirm(
-                    'Der Kontrast ist niedrig (' + ratio.toFixed(1) + ':1).\n' +
-                    'Empfohlen sind mindestens 5:1 – sonst kann der Code auf manchen Geräten ' +
-                    'nicht gelesen werden.\n\nTrotzdem fortfahren?'
-                );
-                if (!weiter) {
+            if (!o.transparent) {
+                if (o.dark.toLowerCase() === o.light.toLowerCase()) {
+                    alert('⚠️ Dunkel- und Hellfarbe sind identisch!\nDer QR-Code wäre unsichtbar und nicht scannbar.');
+                    return;
+                }
+                const ratio = contrastRatio(o.dark, o.light);
+                if (ratio < 3) {
+                    alert(
+                        '⚠️ Der Kontrast zwischen den Farben ist zu gering (Verhältnis ' +
+                        ratio.toFixed(1) + ':1).\n\n' +
+                        'Ein QR-Code braucht einen starken Unterschied zwischen dunkel und hell, ' +
+                        'sonst erkennen Kameras ihn nicht.'
+                    );
                     switchTab('design', document.querySelectorAll('.tab')[1]);
+                    return;
+                }
+                if (ratio < 5) {
+                    if (!confirm('Der Kontrast ist niedrig (' + ratio.toFixed(1) + ':1).\n' +
+                        'Empfohlen sind mindestens 5:1.\n\nTrotzdem fortfahren?')) {
+                        switchTab('design', document.querySelectorAll('.tab')[1]);
+                        return;
+                    }
+                }
+            } else {
+                if (!confirm('Transparenter Hintergrund:\nDer Code ist nur auf einem hellen Untergrund lesbar. ' +
+                    'Auf dunklen Fotos oder farbigen Flächen scannt er nicht.\n\nFortfahren?')) {
                     return;
                 }
             }
 
-            const size = parseInt(document.getElementById('size').value);
+            if (o.cornerEnabled) {
+                const ref = o.transparent ? '#ffffff' : o.light;
+                if (contrastRatio(o.corner, ref) < 3) {
+                    if (!confirm('Die Ecken-Farbe hat zu wenig Kontrast zum Hintergrund.\n' +
+                        'Die Finder-Muster müssen für Scanner gut erkennbar sein.\n\nTrotzdem fortfahren?')) {
+                        switchTab('design', document.querySelectorAll('.tab')[1]);
+                        return;
+                    }
+                }
+            }
+
             const ecLevel = document.getElementById('errorCorrection').value;
-            const logoSizePercent = parseInt(document.getElementById('logoSize').value) / 100;
 
-            // Bugfix: großes Logo + niedrige Fehlerkorrektur = QR-Code scannt nicht
-            if (logoImage && ecLevel !== 'H' && logoSizePercent >= 0.15) {
-                const weiter = confirm(
-                    '⚠️ Achtung: Ein Logo braucht hohe Fehlerkorrektur, sonst scannt der QR-Code evtl. nicht!\n\n' +
-                    'Empfehlung: Fehlerkorrektur „Sehr hoch (30%)"\n\n' +
-                    'Trotzdem mit „' + ecLevel + '"-Stufe fortfahren?'
-                );
-                if (!weiter) {
+            if (logoImage && ecLevel !== 'H' && o.logoSize >= 0.15) {
+                if (!confirm('⚠️ Achtung: Ein Logo braucht hohe Fehlerkorrektur, sonst scannt der QR-Code evtl. nicht!\n\n' +
+                    'Empfehlung: Fehlerkorrektur „Sehr hoch (30%)"\n\nTrotzdem mit „' + ecLevel + '-Stufe fortfahren?')) {
                     switchTab('design', document.querySelectorAll('.tab')[1]);
                     return;
                 }
+            }
+
+            const btn = document.getElementById('generateBtn');
+            let qr;
+            try {
+                qr = buildQR(text, ecLevel);
+            } catch (e) {
+                // Kapazität prüfen: würde eine niedrigere Stufe passen?
+                let hinweis = '';
+                for (const lower of ['Q', 'M', 'L']) {
+                    try {
+                        buildQR(text, lower);
+                        hinweis = '\n\nMit Fehlerkorrektur „' + lower + '" würde der Inhalt passen.';
+                        break;
+                    } catch (e2) { /* weiter probieren */ }
+                }
+                alert('Der Inhalt ist zu lang für einen QR-Code.' + hinweis +
+                      '\n\nTipp: Felder kürzen oder Fehlerkorrektur reduzieren.');
+                return;
             }
 
             isGenerating = true;
-            const btn = document.getElementById('generateBtn');
             btn.disabled = true;
             btn.textContent = '⏳ Generiere...';
 
-            const container = document.getElementById('qrcode');
-            container.innerHTML = '';
-
-            const ecMap = {
-                'L': QRCode.CorrectLevel.L,
-                'M': QRCode.CorrectLevel.M,
-                'Q': QRCode.CorrectLevel.Q,
-                'H': QRCode.CorrectLevel.H
-            };
-
             try {
-                qrCode = new QRCode(container, {
-                    text: text,
-                    width: size,
-                    height: size,
-                    colorDark: darkColor,
-                    colorLight: lightColor,
-                    correctLevel: ecMap[ecLevel]
-                });
+                drawToCanvas(qr, o);
+                lastSVG = buildSVG(qr, o);
             } catch (e) {
-                alert('Fehler beim Generieren: ' + e.message);
+                alert('Fehler beim Rendern: ' + (e && e.message ? e.message : e));
                 isGenerating = false;
                 btn.disabled = false;
                 btn.textContent = '✨ QR-Code generieren';
                 return;
             }
 
-            setTimeout(() => {
-                if (logoImage) {
-                    addLogoToQR(container, logoImage, logoSizePercent);
-                }
-                document.getElementById('result').classList.add('show');
-                isGenerating = false;
-                btn.disabled = false;
-                btn.textContent = '✨ QR-Code generieren';
+            document.getElementById('qrBox').classList.toggle('transparent', o.transparent);
+            // Bugfix: Vorschau-Hintergrund muss der eingestellten Farbe entsprechen
+            document.getElementById('qrBox').style.background = o.transparent ? '' : o.light;
+            document.getElementById('result').classList.add('show');
 
-                // Auf Handy: zum Ergebnis scrollen
-                if (window.innerWidth <= 768) {
-                    document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-            }, 100);
-        }
+            isGenerating = false;
+            btn.disabled = false;
+            btn.textContent = '✨ QR-Code generieren';
 
-        function addLogoToQR(container, logo, sizePercent) {
-            const canvas = container.querySelector('canvas');
-            if (!canvas) return;
-
-            const ctx = canvas.getContext('2d');
-            const size = canvas.width;
-            const logoSize = size * sizePercent;
-            const x = (size - logoSize) / 2;
-            const y = (size - logoSize) / 2;
-            const border = document.getElementById('logoBorder').checked;
-            const shadow = document.getElementById('logoShadow').checked;
-
-            // Schatten auf Logo anwenden
-            if (shadow) {
-                ctx.shadowColor = 'rgba(0,0,0,0.4)';
-                ctx.shadowBlur = 12;
-                ctx.shadowOffsetX = 3;
-                ctx.shadowOffsetY = 3;
-            }
-
-            // Weißer Hintergrund (ohne Schatten) – Bugfix: passend zur
-            // eingestellten Hintergrundfarbe statt immer weiß
-            if (border) {
-                ctx.shadowColor = 'transparent';
-                ctx.shadowBlur = 0;
-                ctx.shadowOffsetX = 0;
-                ctx.shadowOffsetY = 0;
-                ctx.fillStyle = document.getElementById('lightColor').value;
-                ctx.fillRect(x - 8, y - 8, logoSize + 16, logoSize + 16);
-            }
-
-            // Schatten für Logo wieder aktivieren
-            if (shadow) {
-                ctx.shadowColor = 'rgba(0,0,0,0.4)';
-                ctx.shadowBlur = 12;
-                ctx.shadowOffsetX = 3;
-                ctx.shadowOffsetY = 3;
-            }
-
-            // Logo zeichnen
-            ctx.drawImage(logo, x, y, logoSize, logoSize);
-
-            // Schatten zurücksetzen
-            ctx.shadowColor = 'transparent';
-            ctx.shadowBlur = 0;
-            ctx.shadowOffsetX = 0;
-            ctx.shadowOffsetY = 0;
-
-            // WICHTIG: qrcodejs versteckt den Canvas und zeigt stattdessen ein
-            // <img>-Snapshot an. Damit die Vorschau das Logo zeigt, muss das
-            // img aktualisiert werden!
-            const img = container.querySelector('img');
-            if (img) {
-                img.src = canvas.toDataURL('image/png');
+            if (window.innerWidth <= 768) {
+                document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
         }
 
-        function downloadQR() {
-            const canvas = document.querySelector('#qrcode canvas');
-            if (!canvas) {
+        /* ================= Download ================= */
+
+        function downloadQR(format) {
+            const canvas = document.getElementById('qrCanvas');
+            if (!canvas || !lastSVG) {
                 alert('Bitte generiere zuerst einen QR-Code!');
                 return;
             }
 
-            const link = document.createElement('a');
             const typ = document.getElementById('qrType').value;
-            link.download = `qr-${typ}.png`;
-            link.href = canvas.toDataURL('image/png');
-            link.click();
+
+            if (format === 'svg') {
+                const blob = new Blob([lastSVG], { type: 'image/svg+xml;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `qr-${typ}.svg`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+                return;
+            }
+
+            const a = document.createElement('a');
+            a.download = `qr-${typ}.png`;
+            a.href = canvas.toDataURL('image/png');
+            a.click();
+        }
+
+        /* ================= UI-Verdrahtung ================= */
+
+        document.getElementById('qrType').addEventListener('change', function() {
+            const type = this.value;
+            document.querySelectorAll('#content .fields').forEach(el => el.style.display = 'none');
+            const target = document.getElementById(type + 'Fields');
+            if (target) target.style.display = 'block';
+            document.querySelectorAll('.error-msg').forEach(e => e.classList.remove('show'));
+        });
+
+        document.getElementById('encryption').addEventListener('change', function() {
+            const istOffen = this.value === 'nopass';
+            const pw = document.getElementById('password');
+            pw.disabled = istOffen;
+            if (istOffen) pw.value = '';
+            pw.placeholder = istOffen ? 'nicht nötig (offenes Netz)' : 'geheim123';
+        });
+
+        document.getElementById('size').addEventListener('input', function() {
+            document.getElementById('sizeValue').textContent = this.value + 'px';
+        });
+
+        document.getElementById('logoSize').addEventListener('input', function() {
+            document.getElementById('logoSizeValue').textContent = this.value + '%';
+        });
+
+        ['darkColor', 'lightColor', 'cornerColor'].forEach(id => {
+            const input = document.getElementById(id);
+            const valueEl = document.getElementById(id + 'Value');
+            input.addEventListener('input', function() {
+                valueEl.textContent = this.value.toUpperCase();
+            });
+        });
+
+        document.getElementById('cornerEnabled').addEventListener('change', function() {
+            document.getElementById('cornerColorRow').style.display = this.checked ? 'flex' : 'none';
+        });
+
+        // Logo
+        document.getElementById('logoFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            if (!file.type.startsWith('image/')) {
+                alert('Bitte wähle eine Bilddatei!');
+                e.target.value = '';
+                return;
+            }
+            if (file.type === 'image/svg+xml') {
+                alert('SVG-Logos werden nicht unterstützt. Bitte PNG oder JPG verwenden.');
+                e.target.value = '';
+                return;
+            }
+            if (file.size > 5 * 1024 * 1024) {
+                alert('Logo darf max. 5MB groß sein!');
+                e.target.value = '';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    logoImage = img;
+                    document.getElementById('logoPreview').innerHTML =
+                        `<img src="${event.target.result}" alt="Logo Vorschau" />` +
+                        `<button class="remove-logo show" id="removeLogo" onclick="removeLogo()" title="Logo entfernen">✕</button>`;
+                };
+                img.onerror = function() {
+                    alert('Logo konnte nicht geladen werden!');
+                    logoImage = null;
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+
+        function removeLogo() {
+            logoImage = null;
+            document.getElementById('logoFile').value = '';
+            document.getElementById('logoPreview').innerHTML =
+                '<button class="remove-logo" id="removeLogo" onclick="removeLogo()" title="Logo entfernen">✕</button>';
+
+            if (document.getElementById('result').classList.contains('show')) {
+                generateQR();
+            }
+        }
+
+        function togglePassword() {
+            const input = document.getElementById('password');
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+
+        function applyPreset(dark, light) {
+            document.getElementById('darkColor').value = dark;
+            document.getElementById('lightColor').value = light;
+            document.getElementById('darkColorValue').textContent = dark.toUpperCase();
+            document.getElementById('lightColorValue').textContent = light.toUpperCase();
         }
     </script>
 </body>

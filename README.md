@@ -1,33 +1,49 @@
-# 📱 QR-Code Generator (Web-App)
+# 📱 QR-Code Generator Pro
 
-Ein kostenloser, lokaler QR-Code Generator mit Logo-Unterstützung.
-Alles läuft im Browser – keine Daten werden gesendet.
+Kostenloser, rein clientseitiger QR-Code-Generator mit vCard, SVG-Export und
+farbigen Finder-Mustern. **Kein Backend, keine externen Requests** – alle Daten
+bleiben im Browser.
 
 ## Features
 
-- ✅ Text/URL zu QR-Code
-- ✅ Eigene Farben (Dunkel/Hell)
-- ✅ Logo in der Mitte einfügen
-- ✅ Hohe Fehlerkorrektur (für Logos empfohlen)
-- ✅ Download als PNG
-- ✅ 100% kostenlos, keine Anmeldung
+- ✅ 6 QR-Typen: Text/URL, **vCard (Kontakt)**, WiFi, E-Mail, Telefon, SMS
+- ✅ **vCard 3.0** mit korrektem Escaping (`; , \`), CRLF-Zeilen und UTF-8
+- ✅ **SVG-Export** (echtes Vektorformat, verlustfrei für Druck/Plakate)
+- ✅ PNG-Export mit wählbarer Auflösung (128–512 px)
+- ✅ **Transparenter Hintergrund** (PNG + SVG behalten Alpha)
+- ✅ **Separate Farbe für die drei Finder-Muster** (Ecken)
+- ✅ Logo-Upload mit Größe, Hintergrund und Schatten
+- ✅ Eigene Farben + 6 Presets + Kontrastprüfung (WCAG)
+- ✅ Fehlerkorrektur L/M/Q/H, automatische Kapazitätsprüfung
+- ✅ Responsive: Desktop, Tablet, Handy (ab 320 px getestet)
+- ✅ Barrierefrei: Tastaturbedienung, ARIA, sichtbarer Fokus
+
+## Datenschutz
+
+- `qrcode.js` liegt **lokal** im Repo (kein CDN, kein Trackingeintrag)
+- Keine Analytics, keine externen Fonts, keine API-Aufrufe
+- Bilder werden nur per `FileReader` lokal verarbeitet
 
 ## Verwendung
 
-1. Öffne `index.html` in deinem Browser
-2. Gib Text oder URL ein
-3. (Optional) Wähle Farben und lade ein Logo hoch
-4. Klicke "QR-Code generieren"
-5. Klicke "QR-Code herunterladen"
+1. `index.html` im Browser öffnen (oder über GitHub Pages)
+2. Typ wählen und Felder füllen
+3. Design anpassen (Farben, Transparenz, Ecken, Logo)
+4. „QR-Code generieren" → als PNG oder SVG herunterladen
 
 ## Technik
 
-- HTML/CSS/JavaScript
-- [QRCode.js](https://github.com/davidshimjs/qrcodejs) (kostenlos, Open Source)
-- Keine Backend-Abhängigkeiten
+- Reines HTML/CSS/JavaScript, keine Build-Tools
+- [`qrcode-generator`](https://github.com/kazuhikoarase/qrcode-generator) 1.4.4 (MIT), lokal
+- Eigener Canvas- und SVG-Renderer → volle Kontrolle über Farben und Ecken
+- UTF-8-Bytemodus (wichtig für Umlaute in vCards)
 
-## Nächste Schritte
+## Hinweise
 
-- Meme-Generator (nutzt gleiche Technik)
-- Kalorien-Tracker (API + Datenbank)
-- Web-App mit Python Flask für erweiterte Features
+- Transparenter Hintergrund: nur auf hellem Untergrund scannbar
+- Logo + niedrige Fehlerkorrektur: App warnt vorher
+- vCard mit vielen Feldern kann die QR-Kapazität sprengen (App nennt eine passende EC-Stufe)
+
+## Live
+
+https://revucio24-web.github.io/qr-code-generator/
