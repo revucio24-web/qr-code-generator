@@ -2,19 +2,26 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#667eea">
     <title>QR-Code Generator Pro</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            -webkit-text-size-adjust: 100%;
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            min-height: 100dvh;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -35,6 +42,7 @@
             color: #333;
             margin-bottom: 5px;
             font-size: 32px;
+            line-height: 1.2;
         }
 
         .subtitle {
@@ -44,6 +52,7 @@
             font-size: 14px;
         }
 
+        /* ===== TABS ===== */
         .tabs {
             display: flex;
             gap: 10px;
@@ -52,14 +61,17 @@
         }
 
         .tab {
-            padding: 10px 20px;
+            flex: 1;
+            padding: 14px 8px;
             cursor: pointer;
             border: none;
             background: none;
             font-size: 16px;
+            font-family: inherit;
             color: #666;
             border-bottom: 3px solid transparent;
             transition: all 0.3s;
+            touch-action: manipulation;
         }
 
         .tab.active {
@@ -76,6 +88,7 @@
             display: block;
         }
 
+        /* ===== FORM ===== */
         .form-group {
             margin-bottom: 20px;
         }
@@ -90,44 +103,71 @@
 
         input[type="text"],
         input[type="password"],
+        input[type="email"],
+        input[type="tel"],
         input[type="file"],
-        select {
+        select,
+        textarea {
             width: 100%;
-            padding: 12px 15px;
+            padding: 14px 15px;
             border: 2px solid #e0e0e0;
             border-radius: 10px;
             font-size: 16px;
+            font-family: inherit;
             transition: border-color 0.3s;
             background: white;
+            -webkit-appearance: none;
+            appearance: none;
         }
 
-        input[type="text"]:focus,
-        input[type="password"]:focus,
-        select:focus {
+        select {
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3e%3cpath d='M6 9l6 6 6-6'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 18px;
+            padding-right: 40px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 70px;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
             outline: none;
             border-color: #667eea;
         }
 
+        /* ===== COLORS ===== */
         .color-group {
             display: flex;
             gap: 15px;
-            align-items: center;
+            align-items: flex-start;
+        }
+
+        .color-group > div {
+            flex: 1;
+            min-width: 0;
         }
 
         .color-group input[type="color"] {
-            flex: 1;
+            width: 100%;
             height: 50px;
             border: 2px solid #e0e0e0;
             border-radius: 10px;
             cursor: pointer;
+            padding: 3px;
+            background: white;
         }
 
         .color-value {
-            min-width: 70px;
             font-size: 12px;
             color: #666;
             text-align: center;
             font-family: monospace;
+            margin-top: 4px;
         }
 
         .color-presets {
@@ -137,19 +177,31 @@
             margin-top: 10px;
         }
 
-        .preset {
-            width: 40px;
-            height: 40px;
+        button.preset {
+            width: 42px;
+            height: 42px;
+            min-width: 42px;
+            padding: 0;
+            margin: 0;
             border-radius: 8px;
             cursor: pointer;
             border: 2px solid #e0e0e0;
-            transition: transform 0.2s;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: none;
+            flex-shrink: 0;
         }
 
-        .preset:hover {
+        button.preset:hover {
             transform: scale(1.1);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
         }
 
+        button.preset:focus-visible {
+            outline: 3px solid #667eea;
+            outline-offset: 2px;
+        }
+
+        /* ===== SLIDER ===== */
         .slider-group {
             display: flex;
             align-items: center;
@@ -158,40 +210,92 @@
 
         .slider-group input[type="range"] {
             flex: 1;
+            min-width: 0;
+            height: 28px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        .slider-group input[type="range"]::-webkit-slider-runnable-track {
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+        }
+
+        .slider-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            margin-top: -9px;
+            border-radius: 50%;
+            background: #667eea;
+            box-shadow: 0 2px 6px rgba(102,126,234,0.5);
+        }
+
+        .slider-group input[type="range"]::-moz-range-track {
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+        }
+
+        .slider-group input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border: none;
+            border-radius: 50%;
+            background: #667eea;
+            box-shadow: 0 2px 6px rgba(102,126,234,0.5);
         }
 
         .slider-value {
-            min-width: 50px;
+            min-width: 60px;
             text-align: center;
             font-weight: 600;
             color: #667eea;
+            font-size: 14px;
         }
 
+        /* ===== CHECKBOX ===== */
         .checkbox-group {
             display: flex;
             align-items: center;
             gap: 10px;
             margin-bottom: 20px;
+            min-height: 24px;
         }
 
         .checkbox-group input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
+            width: 22px;
+            height: 22px;
+            cursor: pointer;
+            flex-shrink: 0;
+            accent-color: #667eea;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            font-weight: normal;
             cursor: pointer;
         }
 
+        /* ===== BUTTONS ===== */
         button {
             width: 100%;
-            padding: 15px;
+            padding: 16px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
             border-radius: 10px;
             font-size: 18px;
             font-weight: 600;
+            font-family: inherit;
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
             margin-bottom: 10px;
+            touch-action: manipulation;
         }
 
         button:hover:not(:disabled) {
@@ -208,22 +312,15 @@
             cursor: not-allowed;
         }
 
-        .secondary-btn {
-            background: #6c757d;
+        .download-btn {
+            background: #28a745;
         }
 
-        .secondary-btn:hover:not(:disabled) {
-            box-shadow: 0 10px 20px rgba(108, 117, 125, 0.4);
+        .download-btn:hover:not(:disabled) {
+            box-shadow: 0 10px 20px rgba(40, 167, 69, 0.4);
         }
 
-        .danger-btn {
-            background: #dc3545;
-        }
-
-        .danger-btn:hover:not(:disabled) {
-            box-shadow: 0 10px 20px rgba(220, 53, 69, 0.4);
-        }
-
+        /* ===== RESULT ===== */
         .qr-result {
             margin-top: 30px;
             text-align: center;
@@ -240,16 +337,17 @@
             background: white;
             border-radius: 10px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            max-width: 100%;
         }
 
-        .download-btn {
-            background: #28a745;
+        #qrcode canvas,
+        #qrcode img {
+            max-width: 100%;
+            height: auto;
+            display: block;
         }
 
-        .download-btn:hover:not(:disabled) {
-            box-shadow: 0 10px 20px rgba(40, 167, 69, 0.4);
-        }
-
+        /* ===== INFO ===== */
         .info {
             margin-top: 20px;
             padding: 15px;
@@ -264,10 +362,16 @@
             margin-top: 10px;
         }
 
+        .info li {
+            margin-bottom: 6px;
+        }
+
+        /* ===== LOGO ===== */
         .logo-preview {
             margin-top: 10px;
             text-align: center;
             position: relative;
+            min-height: 0;
         }
 
         .logo-preview img {
@@ -285,8 +389,8 @@
             color: white;
             border: none;
             border-radius: 50%;
-            width: 24px;
-            height: 24px;
+            width: 28px;
+            height: 28px;
             font-size: 14px;
             cursor: pointer;
             display: none;
@@ -294,12 +398,14 @@
             justify-content: center;
             padding: 0;
             margin: 0;
+            line-height: 1;
         }
 
         .remove-logo.show {
             display: flex;
         }
 
+        /* ===== ERROR ===== */
         .error-msg {
             color: #dc3545;
             font-size: 13px;
@@ -311,28 +417,244 @@
             display: block;
         }
 
+        /* ===== PASSWORD TOGGLE ===== */
         .password-toggle {
             position: relative;
         }
 
+        .password-toggle input {
+            padding-right: 52px;
+        }
+
+        .password-toggle input:disabled {
+            background: #f1f3f5;
+            color: #adb5bd;
+            cursor: not-allowed;
+        }
+
         .password-toggle button {
             position: absolute;
-            right: 10px;
+            right: 6px;
             top: 50%;
             transform: translateY(-50%);
             width: auto;
-            padding: 5px 10px;
+            padding: 8px 10px;
             margin: 0;
             background: none;
             color: #666;
-            font-size: 12px;
+            font-size: 18px;
             border: none;
+            line-height: 1;
+            box-shadow: none;
         }
 
         .password-toggle button:hover {
             color: #667eea;
             transform: translateY(-50%);
             box-shadow: none;
+        }
+
+        /* =====================================================
+           RESPONSIVE: TABLET (max 768px)
+           ===================================================== */
+        @media (max-width: 768px) {
+            body {
+                padding: 14px;
+                align-items: flex-start;
+            }
+
+            .container {
+                padding: 26px 22px;
+                border-radius: 16px;
+                margin: 0 auto;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
+
+            .subtitle {
+                font-size: 13px;
+                margin-bottom: 22px;
+            }
+
+            #qrcode {
+                padding: 14px;
+            }
+        }
+
+        /* =====================================================
+           RESPONSIVE: HANDY (max 480px)
+           ===================================================== */
+        @media (max-width: 480px) {
+            body {
+                padding: 0;
+                align-items: stretch;
+            }
+
+            .container {
+                border-radius: 0;
+                padding: 22px 16px calc(28px + env(safe-area-inset-bottom, 0px));
+                min-height: 100dvh;
+                max-width: 100%;
+                box-shadow: none;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .subtitle {
+                font-size: 12px;
+                margin-bottom: 18px;
+            }
+
+            .tabs {
+                gap: 4px;
+                margin-bottom: 18px;
+                position: sticky;
+                top: 0;
+                background: white;
+                z-index: 10;
+                padding-top: 4px;
+            }
+
+            .tab {
+                padding: 12px 4px;
+                font-size: 14px;
+            }
+
+            .form-group {
+                margin-bottom: 16px;
+            }
+
+            label {
+                font-size: 13px;
+            }
+
+            input[type="text"],
+            input[type="password"],
+            input[type="file"],
+            select,
+            textarea {
+                padding: 13px 12px;
+                font-size: 16px; /* 16px verhindert iOS-Zoom */
+            }
+
+            button {
+                padding: 15px;
+                font-size: 16px;
+            }
+
+            /* Farbwahl: untereinander, damit die Picker groß bleiben */
+            .color-group {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .color-group > div {
+                width: 100%;
+            }
+
+            .color-group input[type="color"] {
+                height: 52px;
+            }
+
+            button.preset {
+                width: 46px;
+                height: 46px;
+                min-width: 46px;
+            }
+
+            .slider-value {
+                min-width: 52px;
+                font-size: 13px;
+            }
+
+            #qrcode {
+                padding: 10px;
+            }
+
+            .info {
+                font-size: 12px;
+                padding: 12px;
+            }
+
+            .info ul {
+                margin-left: 16px;
+            }
+
+            .logo-preview img {
+                max-width: 80px;
+                max-height: 80px;
+            }
+
+            .remove-logo {
+                right: calc(50% - 40px);
+            }
+        }
+
+        /* =====================================================
+           RESPONSIVE: SEHR KLEIN (max 360px)
+           ===================================================== */
+        @media (max-width: 360px) {
+            h1 {
+                font-size: 19px;
+            }
+
+            .tab {
+                font-size: 13px;
+                padding: 11px 2px;
+            }
+        }
+
+        /* =====================================================
+           QUERFORMAT HANDY (niedrige Höhe)
+           ===================================================== */
+        @media (max-height: 500px) and (orientation: landscape) {
+            body {
+                align-items: flex-start;
+                padding: 10px;
+            }
+
+            .container {
+                padding: 18px;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+
+            .subtitle {
+                display: none;
+            }
+        }
+
+        /* =====================================================
+           GROSSE BILDSCHIRME (Desktop ab 1200px)
+           ===================================================== */
+        @media (min-width: 1200px) {
+            .container {
+                max-width: 640px;
+                padding: 46px;
+            }
+        }
+
+        /* Hover-Effekte nur auf Geräten mit Maus */
+        @media (hover: none) {
+            .preset:hover,
+            button:hover:not(:disabled) {
+                transform: none;
+                box-shadow: none;
+            }
+
+            /* Bugfix: Der 👁️-Button wird über translateY(-50%) zentriert.
+               Diese Regel steht nach dem generischen Reset, damit die
+               Zentrierung auf Touch-Geräten erhalten bleibt. */
+            .password-toggle button:hover {
+                transform: translateY(-50%);
+                box-shadow: none;
+            }
         }
     </style>
 </head>
@@ -341,17 +663,17 @@
         <h1>📱 QR-Code Generator Pro</h1>
         <p class="subtitle">Erstelle professionelle QR-Codes – 100% kostenlos & lokal</p>
 
-        <div class="tabs">
-            <button class="tab active" onclick="switchTab('content', this)">Inhalt</button>
-            <button class="tab" onclick="switchTab('design', this)">Design</button>
-            <button class="tab" onclick="switchTab('logo', this)">Logo</button>
+        <div class="tabs" role="tablist" aria-label="Bereiche">
+            <button class="tab active" role="tab" aria-selected="true" onclick="switchTab('content', this)">Inhalt</button>
+            <button class="tab" role="tab" aria-selected="false" onclick="switchTab('design', this)">Design</button>
+            <button class="tab" role="tab" aria-selected="false" onclick="switchTab('logo', this)">Logo</button>
         </div>
 
         <!-- Tab: Inhalt -->
         <div id="content" class="tab-content active">
             <div class="form-group">
                 <label for="text">Text oder URL:</label>
-                <input type="text" id="text" placeholder="z.B. https://meine-website.de" />
+                <input type="text" id="text" placeholder="z.B. https://meine-website.de" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" />
             </div>
 
             <div class="form-group">
@@ -368,14 +690,14 @@
             <div id="wifiFields" style="display: none;">
                 <div class="form-group">
                     <label for="ssid">Netzwerkname (SSID):</label>
-                    <input type="text" id="ssid" placeholder="MeinWLAN" />
+                    <input type="text" id="ssid" placeholder="MeinWLAN" autocomplete="off" autocapitalize="off" spellcheck="false" />
                     <div class="error-msg" id="ssidError">SSID darf nicht leer sein</div>
                 </div>
                 <div class="form-group">
                     <label for="password">Passwort:</label>
                     <div class="password-toggle">
-                        <input type="password" id="password" placeholder="geheim123" />
-                        <button type="button" onclick="togglePassword()">👁️</button>
+                        <input type="password" id="password" placeholder="geheim123" autocomplete="off" />
+                        <button type="button" onclick="togglePassword()" aria-label="Passwort anzeigen">👁️</button>
                     </div>
                 </div>
                 <div class="form-group">
@@ -391,7 +713,7 @@
             <div id="emailFields" style="display: none;">
                 <div class="form-group">
                     <label for="email">E-Mail-Adresse:</label>
-                    <input type="text" id="email" placeholder="info@example.com" />
+                    <input type="email" id="email" placeholder="info@example.com" inputmode="email" autocomplete="off" autocapitalize="off" spellcheck="false" />
                     <div class="error-msg" id="emailError">Ungültige E-Mail-Adresse</div>
                 </div>
                 <div class="form-group">
@@ -400,14 +722,14 @@
                 </div>
                 <div class="form-group">
                     <label for="body">Nachricht (optional):</label>
-                    <textarea id="body" placeholder="Nachricht..." style="width:100%; padding:12px 15px; border:2px solid #e0e0e0; border-radius:10px; font-size:16px; resize:vertical; min-height:60px; font-family:inherit;"></textarea>
+                    <textarea id="body" placeholder="Nachricht..."></textarea>
                 </div>
             </div>
 
             <div id="phoneFields" style="display: none;">
                 <div class="form-group">
                     <label for="phone">Telefonnummer:</label>
-                    <input type="text" id="phone" placeholder="+49 123 456789" />
+                    <input type="tel" id="phone" placeholder="+49 123 456789" inputmode="tel" />
                     <div class="error-msg" id="phoneError">Telefonnummer darf nicht leer sein</div>
                 </div>
             </div>
@@ -415,7 +737,7 @@
             <div id="smsFields" style="display: none;">
                 <div class="form-group">
                     <label for="smsPhone">Telefonnummer:</label>
-                    <input type="text" id="smsPhone" placeholder="+49 123 456789" />
+                    <input type="tel" id="smsPhone" placeholder="+49 123 456789" inputmode="tel" />
                     <div class="error-msg" id="smsPhoneError">Telefonnummer darf nicht leer sein</div>
                 </div>
                 <div class="form-group">
@@ -430,15 +752,15 @@
             <div class="form-group">
                 <label>Farben:</label>
                 <div class="color-group">
-                    <div style="flex: 1;">
+                    <div>
                         <label for="darkColor" style="font-size: 12px; font-weight: normal;">Dunkel (Module):</label>
                         <input type="color" id="darkColor" value="#000000" />
                         <div class="color-value" id="darkColorValue">#000000</div>
                     </div>
-                    <div style="flex: 1;">
+                    <div>
                         <label for="lightColor" style="font-size: 12px; font-weight: normal;">Hell (Hintergrund):</label>
                         <input type="color" id="lightColor" value="#ffffff" />
-                        <div class="color-value" id="lightColorValue">#ffffff</div>
+                        <div class="color-value" id="lightColorValue">#FFFFFF</div>
                     </div>
                 </div>
             </div>
@@ -446,12 +768,12 @@
             <div class="form-group">
                 <label>Farb-Presets:</label>
                 <div class="color-presets">
-                    <div class="preset" style="background: #000;" onclick="applyPreset('#000000', '#ffffff')" title="Klassisch"></div>
-                    <div class="preset" style="background: #667eea;" onclick="applyPreset('#667eea', '#ffffff')" title="Lila"></div>
-                    <div class="preset" style="background: #e74c3c;" onclick="applyPreset('#e74c3c', '#ffffff')" title="Rot"></div>
-                    <div class="preset" style="background: #27ae60;" onclick="applyPreset('#27ae60', '#ffffff')" title="Grün"></div>
-                    <div class="preset" style="background: #2c3e50;" onclick="applyPreset('#2c3e50', '#ecf0f1')" title="Dunkel"></div>
-                    <div class="preset" style="background: #f39c12;" onclick="applyPreset('#f39c12', '#ffffff')" title="Orange"></div>
+                    <button type="button" class="preset" style="background:#000;" onclick="applyPreset('#000000','#ffffff')" title="Klassisch" aria-label="Preset Klassisch"></button>
+                    <button type="button" class="preset" style="background:#667eea;" onclick="applyPreset('#667eea','#ffffff')" title="Lila" aria-label="Preset Lila"></button>
+                    <button type="button" class="preset" style="background:#e74c3c;" onclick="applyPreset('#e74c3c','#ffffff')" title="Rot" aria-label="Preset Rot"></button>
+                    <button type="button" class="preset" style="background:#27ae60;" onclick="applyPreset('#27ae60','#ffffff')" title="Grün" aria-label="Preset Grün"></button>
+                    <button type="button" class="preset" style="background:#2c3e50;" onclick="applyPreset('#2c3e50','#ecf0f1')" title="Dunkel" aria-label="Preset Dunkel"></button>
+                    <button type="button" class="preset" style="background:#f39c12;" onclick="applyPreset('#f39c12','#ffffff')" title="Orange" aria-label="Preset Orange"></button>
                 </div>
             </div>
 
@@ -494,12 +816,12 @@
 
             <div class="checkbox-group">
                 <input type="checkbox" id="logoBorder" checked />
-                <label for="logoBorder" style="margin: 0; font-weight: normal;">Weißer Rand um Logo</label>
+                <label for="logoBorder">Weißer Rand um Logo</label>
             </div>
 
             <div class="checkbox-group">
                 <input type="checkbox" id="logoShadow" />
-                <label for="logoShadow" style="margin: 0; font-weight: normal;">Schatten um Logo</label>
+                <label for="logoShadow">Schatten um Logo</label>
             </div>
         </div>
 
@@ -530,9 +852,13 @@
 
         // Tab-Wechsel
         function switchTab(tabName, element) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => {
+                t.classList.remove('active');
+                t.setAttribute('aria-selected', 'false');
+            });
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             element.classList.add('active');
+            element.setAttribute('aria-selected', 'true');
             document.getElementById(tabName).classList.add('active');
         }
 
@@ -546,6 +872,15 @@
                 document.getElementById(type + 'Fields').style.display = 'block';
             }
             document.querySelectorAll('.error-msg').forEach(e => e.classList.remove('show'));
+        });
+
+        // Bugfix: bei "keine Verschlüsselung" wird kein Passwort benötigt
+        document.getElementById('encryption').addEventListener('change', function() {
+            const istOffen = this.value === 'nopass';
+            const pw = document.getElementById('password');
+            pw.disabled = istOffen;
+            if (istOffen) pw.value = '';
+            pw.placeholder = istOffen ? 'nicht nötig (offenes Netz)' : 'geheim123';
         });
 
         // Slider-Werte aktualisieren
@@ -569,30 +904,34 @@
         // Logo-Vorschau
         document.getElementById('logo').addEventListener('change', function(e) {
             const file = e.target.files[0];
-            if (file) {
-                if (!file.type.startsWith('image/')) {
-                    alert('Bitte wähle eine Bilddatei!');
-                    return;
-                }
-                if (file.size > 5 * 1024 * 1024) {
-                    alert('Logo darf max. 5MB groß sein!');
-                    return;
-                }
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    logoImage = new Image();
-                    logoImage.onload = function() {
-                        const preview = document.getElementById('logoPreview');
-                        preview.innerHTML = `<img src="${event.target.result}" alt="Logo Vorschau" /><button class="remove-logo show" id="removeLogo" onclick="removeLogo()" title="Logo entfernen">✕</button>`;
-                    };
-                    logoImage.onerror = function() {
-                        alert('Logo konnte nicht geladen werden!');
-                        logoImage = null;
-                    };
-                    logoImage.src = event.target.result;
-                };
-                reader.readAsDataURL(file);
+            if (!file) return;
+
+            if (!file.type.startsWith('image/')) {
+                alert('Bitte wähle eine Bilddatei!');
+                e.target.value = '';
+                return;
             }
+            if (file.size > 5 * 1024 * 1024) {
+                alert('Logo darf max. 5MB groß sein!');
+                e.target.value = '';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    logoImage = img;
+                    const preview = document.getElementById('logoPreview');
+                    preview.innerHTML = `<img src="${event.target.result}" alt="Logo Vorschau" /><button class="remove-logo show" id="removeLogo" onclick="removeLogo()" title="Logo entfernen">✕</button>`;
+                };
+                img.onerror = function() {
+                    alert('Logo konnte nicht geladen werden!');
+                    logoImage = null;
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
         });
 
         // Logo entfernen
@@ -600,6 +939,12 @@
             logoImage = null;
             document.getElementById('logo').value = '';
             document.getElementById('logoPreview').innerHTML = '<button class="remove-logo" id="removeLogo" onclick="removeLogo()" title="Logo entfernen">✕</button>';
+
+            // Bugfix: Vorschau sofort aktualisieren, damit kein veraltetes Logo
+            // im angezeigten (und herunterladbaren) QR-Code zurückbleibt
+            if (document.getElementById('result').classList.contains('show')) {
+                generateQR();
+            }
         }
 
         // Passwort anzeigen/verstecken
@@ -624,6 +969,34 @@
         // E-Mail Validierung
         function isValidEmail(email) {
             return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        // Bugfix: Kontrast zwischen Modul- und Hintergrundfarbe prüfen
+        // (identische Farben reichen als Prüfung nicht aus)
+        function hexToRgb(hex) {
+            const h = hex.replace('#', '');
+            const full = h.length === 3 ? h.split('').map(c => c + c).join('') : h;
+            return {
+                r: parseInt(full.slice(0, 2), 16),
+                g: parseInt(full.slice(2, 4), 16),
+                b: parseInt(full.slice(4, 6), 16)
+            };
+        }
+
+        function relativeLuminance({ r, g, b }) {
+            const a = [r, g, b].map(v => {
+                const s = v / 255;
+                return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
+            });
+            return 0.2126 * a[0] + 0.7152 * a[1] + 0.0722 * a[2];
+        }
+
+        function contrastRatio(hexA, hexB) {
+            const la = relativeLuminance(hexToRgb(hexA));
+            const lb = relativeLuminance(hexToRgb(hexB));
+            const hell = Math.max(la, lb);
+            const dunkel = Math.min(la, lb);
+            return (hell + 0.05) / (dunkel + 0.05);
         }
 
         // Fehlermeldung anzeigen/verstecken
@@ -656,6 +1029,10 @@
                     }
                     showError('ssidError', false);
 
+                    // Bugfix: offene Netze ("nopass") dürfen kein P:-Feld enthalten
+                    if (encryption === 'nopass') {
+                        return `WIFI:S:${escapeWifi(ssid)};T:nopass;;`;
+                    }
                     return `WIFI:S:${escapeWifi(ssid)};T:${encryption};P:${escapeWifi(password)};;`;
                 }
                 case 'email': {
@@ -713,11 +1090,6 @@
             const text = getQRText();
             if (!text) return;
 
-            isGenerating = true;
-            const btn = document.getElementById('generateBtn');
-            btn.disabled = true;
-            btn.textContent = '⏳ Generiere...';
-
             const darkColor = document.getElementById('darkColor').value;
             const lightColor = document.getElementById('lightColor').value;
 
@@ -725,6 +1097,30 @@
             if (darkColor.toLowerCase() === lightColor.toLowerCase()) {
                 alert('⚠️ Dunkel- und Hellfarbe sind identisch!\nDer QR-Code wäre unsichtbar und nicht scannbar.');
                 return;
+            }
+
+            // Bugfix: zu geringer Kontrast = nicht scannbar
+            const ratio = contrastRatio(darkColor, lightColor);
+            if (ratio < 3) {
+                alert(
+                    '⚠️ Der Kontrast zwischen den Farben ist zu gering (Verhältnis ' +
+                    ratio.toFixed(1) + ':1).\n\n' +
+                    'Ein QR-Code braucht einen starken Unterschied zwischen dunkel und hell, ' +
+                    'sonst erkennen Kameras ihn nicht. Bitte wähle deutlich hellere/dunklere Farben.'
+                );
+                switchTab('design', document.querySelectorAll('.tab')[1]);
+                return;
+            }
+            if (ratio < 5) {
+                const weiter = confirm(
+                    'Der Kontrast ist niedrig (' + ratio.toFixed(1) + ':1).\n' +
+                    'Empfohlen sind mindestens 5:1 – sonst kann der Code auf manchen Geräten ' +
+                    'nicht gelesen werden.\n\nTrotzdem fortfahren?'
+                );
+                if (!weiter) {
+                    switchTab('design', document.querySelectorAll('.tab')[1]);
+                    return;
+                }
             }
 
             const size = parseInt(document.getElementById('size').value);
@@ -743,6 +1139,11 @@
                     return;
                 }
             }
+
+            isGenerating = true;
+            const btn = document.getElementById('generateBtn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Generiere...';
 
             const container = document.getElementById('qrcode');
             container.innerHTML = '';
@@ -779,6 +1180,11 @@
                 isGenerating = false;
                 btn.disabled = false;
                 btn.textContent = '✨ QR-Code generieren';
+
+                // Auf Handy: zum Ergebnis scrollen
+                if (window.innerWidth <= 768) {
+                    document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
             }, 100);
         }
 
@@ -802,13 +1208,14 @@
                 ctx.shadowOffsetY = 3;
             }
 
-            // Weißer Hintergrund (ohne Schatten)
+            // Weißer Hintergrund (ohne Schatten) – Bugfix: passend zur
+            // eingestellten Hintergrundfarbe statt immer weiß
             if (border) {
                 ctx.shadowColor = 'transparent';
                 ctx.shadowBlur = 0;
                 ctx.shadowOffsetX = 0;
                 ctx.shadowOffsetY = 0;
-                ctx.fillStyle = '#ffffff';
+                ctx.fillStyle = document.getElementById('lightColor').value;
                 ctx.fillRect(x - 8, y - 8, logoSize + 16, logoSize + 16);
             }
 
@@ -846,7 +1253,8 @@
             }
 
             const link = document.createElement('a');
-            link.download = 'qrcode.png';
+            const typ = document.getElementById('qrType').value;
+            link.download = `qr-${typ}.png`;
             link.href = canvas.toDataURL('image/png');
             link.click();
         }
