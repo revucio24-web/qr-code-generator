@@ -110,15 +110,22 @@ async function handleDocument(req) {
 async function handleAsset(req) {
   const cache = await caches.open(CACHE_NAME);
   const cached = await cache.match(req);
+
+  // Immer im Hintergrund aktualisieren (stale-while-revalidate),
+  // damit geänderte Dateien nicht dauerhaft im Cache "kleben".
+  const network = fetch(req)
+    .then((res) => {
+      if (res && res.status === 200 && res.type === 'basic') {
+        cache.put(req, res.clone()).catch(() => {});
+      }
+      return res;
+    })
+    .catch(() => null);
+
   if (cached) return cached;
 
-  try {
-    const res = await fetch(req);
-    if (res && res.status === 200 && res.type === 'basic') {
-      cache.put(req, res.clone()).catch(() => {});
-    }
-    return res;
-  } catch (e) {
-    return new Response('', { status: 504, statusText: 'Offline' });
-  }
+  const res = await network;
+  if (res) return res;
+
+  return new Response('', { status: 504, statusText: 'Offline' });
 }

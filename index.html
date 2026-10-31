@@ -8,6 +8,7 @@
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icons/icon-192.png">
     <title>QR-Code Generator Pro</title>
+    <meta name="description" content="QR-Codes erstellen mit vCard, WiFi, E-Mail und Logo – inklusive SVG-Export, Eckerfarben und Druckbogen. Alle Berechnungen laufen lokal im Browser, ohne Datenübertragung.">
     <style>
         * {
             margin: 0;
@@ -76,8 +77,8 @@
         }
 
         .tab.active {
-            color: #667eea;
-            border-bottom-color: #667eea;
+            color: #4c5fd7;
+            border-bottom-color: #4c5fd7;
             font-weight: 600;
         }
 
@@ -232,7 +233,7 @@
 
         .slider-value {
             min-width: 60px; text-align: center; font-weight: 600;
-            color: #667eea; font-size: 14px;
+            color: #4c5fd7; font-size: 14px;
         }
 
         /* ===== CHECKBOX ===== */
@@ -253,7 +254,7 @@
 
         .hint {
             font-size: 12px;
-            color: #8a8f98;
+            color: #5f6670;
             margin-top: 6px;
             line-height: 1.4;
         }
@@ -334,7 +335,7 @@
             margin-top: 18px;
             text-align: center;
             font-size: 12px;
-            color: #8a8f98;
+            color: #5f6670;
             line-height: 1.6;
         }
 
@@ -466,7 +467,7 @@
         }
 
         .password-toggle button:hover {
-            color: #667eea;
+            color: #4c5fd7;
             transform: translateY(-50%);
             box-shadow: none;
         }
@@ -586,9 +587,8 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>📱 QR-Code Generator Pro</h1>
-        <p class="subtitle">Erstelle professionelle QR-Codes – 100% kostenlos & lokal</p>
+    <main class="container">
+        <h1>📱 QR-Code Generator Pro</h1>        <p class="subtitle">Erstelle professionelle QR-Codes – 100% kostenlos & lokal</p>
 
         <div class="tabs" role="tablist" aria-label="Bereiche">
             <button class="tab active" role="tab" aria-selected="true" onclick="switchTab('content', this)">Inhalt</button>
@@ -918,11 +918,11 @@
             <div>Alle Berechnungen laufen in Ihrem Browser. Es werden keine Daten übertragen.</div>
             <div style="margin-top:4px;">
                 <span id="appVersion">v2.0</span> · <span id="appDate">31.10.2026</span> ·
-                <a href="https://github.com/revucio24-web/qr-code-generator" target="_blank" rel="noopener noreferrer" style="color:#667eea;">Quellcode</a> ·
-                <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer" style="color:#667eea;">AGPL-3.0</a>
+                <a href="https://github.com/revucio24-web/qr-code-generator" target="_blank" rel="noopener noreferrer" style="color:#4c5fd7;">Quellcode</a> ·
+                <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer" style="color:#4c5fd7;">AGPL-3.0</a>
             </div>
         </footer>
-    </div>
+    </main>
 
     <!-- Druckbogen: nur beim Drucken sichtbar -->
     <div id="printSheet" aria-hidden="true"></div>
@@ -975,7 +975,9 @@
         function normalizeUrl(raw) {
             const url = String(raw || '').trim();
             if (!url) return '';
-            if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(url)) return url; // hat bereits ein Schema
+            if (/^[a-z][a-z0-9+.-]*:\/\//i.test(url)) return url;      // http://, https://, ftp://
+            if (/^(mailto|tel|sms):/i.test(url)) return url;           // Sonder-Schemata
+            if (/^\/\//.test(url)) return 'https:' + url;              // protokollrelativ
             return 'https://' + url;
         }
 
@@ -1358,8 +1360,12 @@
             const exportInfo = document.getElementById('exportInfo');
 
             if (exportInfo) {
+                // Bugfix: muss die Download-Größe zeigen, nicht die Vorschau
+                const sel = document.getElementById('exportSize').value;
+                const dl = sel === 'preview' ? px + ' px' : parseInt(sel, 10) + ' px';
                 exportInfo.textContent =
-                    'Export: ' + px + ' × ' + px + ' px (PNG) · SVG ist beliebig skalierbar';
+                    'Vorschau: ' + px + ' × ' + px + ' px · PNG-Download: ' + dl +
+                    ' · SVG ist beliebig skalierbar';
             }
 
             if (px > o.size) {
@@ -1500,6 +1506,10 @@
 
             lastRender = { text: text, ecLevel: ecLevel };
             updateResultChrome(o);
+
+            // Bugfix: alter Selbsttest-Ergebnis darf nicht stehen bleiben
+            const st = document.getElementById('selfTestResult');
+            if (st) { st.textContent = ''; st.style.color = '#666'; }
 
             isGenerating = false;
             btn.disabled = false;
@@ -1847,7 +1857,7 @@
 
         /* ================= Druckbogen ================= */
 
-        function buildPrintSheet() {
+        async function buildPrintSheet() {
             if (!lastRender) {
                 alert('Bitte generiere zuerst einen QR-Code!');
                 return;
@@ -1880,10 +1890,55 @@
                 sheet.appendChild(cell);
             }
 
+            // Bugfix: erst drucken, wenn alle Bilder dekodiert sind –
+            // sonst enthält der Ausdruck leere Kästchen.
+            const bilder = Array.from(sheet.querySelectorAll('img'));
+            await Promise.all(bilder.map((img) => {
+                if (typeof img.decode === 'function') {
+                    return img.decode().catch(() => {});
+                }
+                return new Promise((resolve) => {
+                    if (img.complete) return resolve();
+                    img.onload = () => resolve();
+                    img.onerror = () => resolve();
+                });
+            }));
+
             window.print();
+
+            // Bugfix: erst nach dem Druck freigeben (afterprint), nicht per Timer –
+            // sonst kann der Bogen bei langsamen Druckdialogen geleert werden.
+            const aufraeumen = () => { sheet.innerHTML = ''; };
+            window.addEventListener('afterprint', aufraeumen, { once: true });
+            window.setTimeout(aufraeumen, 120000);
         }
 
         /* ================= Stapel (CSV -> ZIP) ================= */
+
+        // Dateinamen fuer den Stapel: Umlaute transliterieren, Rest bereinigen
+        function safeFileName(raw, fallback) {
+            const map = { 'ä': 'ae', 'ö': 'oe', 'ü': 'ue', 'Ä': 'Ae', 'Ö': 'Oe', 'Ü': 'Ue', 'ß': 'ss' };
+            const name = String(raw || '')
+                .replace(/[äöüÄÖÜß]/g, (c) => map[c])
+                .replace(/[^\w.\-]+/g, '_')
+                .replace(/^_+|_+$/g, '')
+                .slice(0, 60);
+            return name || fallback;
+        }
+
+        // Zeile in Inhalt + optionalen Dateinamen trennen.
+        // Ein Semikolon gilt nur dann als Trenner, wenn der Rest wie ein Name
+        // aussieht (kein "=" und kein "/") – sonst bleibt die URL vollständig.
+        function splitBatchLine(line) {
+            const idx = line.indexOf(';');
+            if (idx <= 0) return { content: line.trim(), name: '' };
+
+            const rest = line.slice(idx + 1).trim();
+            if (!rest || /[=\/\\]/.test(rest)) {
+                return { content: line.trim(), name: '' };
+            }
+            return { content: line.slice(0, idx).trim(), name: rest };
+        }
 
         document.getElementById('batchFile').addEventListener('change', function(e) {
             const file = e.target.files[0];
@@ -1938,15 +1993,25 @@
 
             let ok = 0;
             let fail = 0;
+            const benutzt = Object.create(null);
 
             try {
                 for (let i = 0; i < lines.length; i++) {
-                    const parts = lines[i].split(';');
-                    const content = (parts[0] || '').trim();
+                    const teile = splitBatchLine(lines[i]);
+                    const content = teile.content;
                     if (!content) { fail++; continue; }
 
-                    let name = (parts[1] || '').trim() || ('qr-' + String(i + 1).padStart(3, '0'));
-                    name = name.replace(/[^\w.\-]+/g, '_').slice(0, 60) || ('qr-' + (i + 1));
+                    const basis = safeFileName(teile.name, 'qr-' + String(i + 1).padStart(3, '0'));
+
+                    // Bugfix: doppelte Namen durchnummerieren statt überschreiben
+                    let name = basis;
+                    if (benutzt[basis]) {
+                        let n = 2;
+                        while (benutzt[basis + '-' + n]) n++;
+                        name = basis + '-' + n;
+                    }
+                    benutzt[basis] = true;
+                    benutzt[name] = true;
 
                     try {
                         const qr = buildQR(content, ec);
