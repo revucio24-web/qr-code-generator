@@ -698,8 +698,8 @@
             <div class="color-group" id="cornerColorRow" style="display:none; margin-bottom:16px;">
                 <div>
                     <label for="cornerColor" class="label-sm">Ecken-Farbe:</label>
-                    <input type="color" id="cornerColor" value="#667eea" />
-                    <div class="color-value" id="cornerColorValue">#667EEA</div>
+                    <input type="color" id="cornerColor" value="#4c5fd7" />
+                    <div class="color-value" id="cornerColorValue">#4C5FD7</div>
                 </div>
             </div>
         </div>
@@ -743,6 +743,7 @@
                 <button class="download-btn" onclick="downloadQR('png')">⬇️ PNG</button>
                 <button class="svg-btn" onclick="downloadQR('svg')">⬇️ SVG (verlustfrei)</button>
             </div>
+            <div class="hint" id="resHint" style="display:none; margin-top:10px;"></div>
         </div>
 
         <div class="info">
@@ -768,6 +769,7 @@
         let logoImage = null;
         let isGenerating = false;
         let lastSVG = null;
+        let lastRender = null;   // { text, ecLevel } des zuletzt gerenderten Codes
 
         /* ================= Helpers ================= */
 
@@ -793,6 +795,14 @@
 
         function isValidEmail(email) {
             return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        // Bugfix: "meine-firma.de" wird sonst als toter Text im Kontakt gespeichert
+        function normalizeUrl(raw) {
+            const url = String(raw || '').trim();
+            if (!url) return '';
+            if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(url)) return url; // hat bereits ein Schema
+            return 'https://' + url;
         }
 
         /* ================= vCard 3.0 ================= */
@@ -835,7 +845,7 @@
             if (org)  lines.push('ORG:' + vCardEscape(org));
             if (tel)  lines.push('TEL;TYPE=CELL:' + vCardEscape(tel));
             if (mail) lines.push('EMAIL;TYPE=INTERNET:' + vCardEscape(mail));
-            if (url)  lines.push('URL:' + vCardEscape(url));
+            if (url)  lines.push('URL:' + vCardEscape(normalizeUrl(url)));
             lines.push('END:VCARD');
 
             // vCard verlangt CRLF als Zeilentrenner
@@ -974,7 +984,8 @@
             const ctx = canvas.getContext('2d');
             const count = qr.getModuleCount();
             const total = count + QUIET * 2;
-            const scale = Math.max(1, Math.floor(o.size / total));
+            // Bugfix: mindestens 2 px pro Modul, sonst ist der Code nicht scanbar
+            const scale = Math.max(2, Math.floor(o.size / total));
             const px = total * scale;
 
             canvas.width = px;
@@ -1093,6 +1104,43 @@
             return parts.join('');
         }
 
+        function updateResultChrome(o) {
+            const box = document.getElementById('qrBox');
+            box.classList.toggle('transparent', o.transparent);
+            // Bugfix: Vorschau-Hintergrund muss der eingestellten Farbe entsprechen
+            box.style.background = o.transparent ? '' : o.light;
+
+            const px = document.getElementById('qrCanvas').width;
+            const hint = document.getElementById('resHint');
+            if (px > o.size) {
+                hint.textContent =
+                    'Hinweis: Für diese Datenmenge wurde die Auflösung auf ' + px +
+                    ' px erhöht (mindestens 2 px pro Modul), damit der Code scanbar bleibt. ' +
+                    'Für Druck bitte SVG verwenden.';
+                hint.style.display = 'block';
+            } else {
+                hint.style.display = 'none';
+                hint.textContent = '';
+            }
+
+            document.getElementById('result').classList.add('show');
+        }
+
+        // Stilles Neuzeichnen (ohne Validierungsdialoge) – z. B. nach Logo-Entfernen
+        function refreshPreview() {
+            if (!lastRender) return false;
+            const o = readOptions();
+            try {
+                const qr = buildQR(lastRender.text, lastRender.ecLevel);
+                drawToCanvas(qr, o);
+                lastSVG = buildSVG(qr, o);
+                updateResultChrome(o);
+                return true;
+            } catch (e) {
+                return false;
+            }
+        }
+
         /* ================= Generieren ================= */
 
         function generateQR() {
@@ -1139,9 +1187,13 @@
 
             if (o.cornerEnabled) {
                 const ref = o.transparent ? '#ffffff' : o.light;
-                if (contrastRatio(o.corner, ref) < 3) {
-                    if (!confirm('Die Ecken-Farbe hat zu wenig Kontrast zum Hintergrund.\n' +
-                        'Die Finder-Muster müssen für Scanner gut erkennbar sein.\n\nTrotzdem fortfahren?')) {
+                const cornerRatio = contrastRatio(o.corner, ref);
+                // Bugfix: 3:1 reicht nicht – Scanner brauchen kräftige Finder-Muster.
+                // Getestet: #667eea (3,7:1) ließ den Code bei jsQR scheitern.
+                if (cornerRatio < 4.5) {
+                    if (!confirm('Die Ecken-Farbe hat nur ' + cornerRatio.toFixed(1) + ':1 Kontrast zum Hintergrund.\n' +
+                        'Finder-Muster brauchen mindestens 4,5:1, sonst erkennen Scanner den Code evtl. nicht.\n\n' +
+                        'Trotzdem fortfahren?')) {
                         switchTab('design', document.querySelectorAll('.tab')[1]);
                         return;
                     }
@@ -1192,10 +1244,8 @@
                 return;
             }
 
-            document.getElementById('qrBox').classList.toggle('transparent', o.transparent);
-            // Bugfix: Vorschau-Hintergrund muss der eingestellten Farbe entsprechen
-            document.getElementById('qrBox').style.background = o.transparent ? '' : o.light;
-            document.getElementById('result').classList.add('show');
+            lastRender = { text: text, ecLevel: ecLevel };
+            updateResultChrome(o);
 
             isGenerating = false;
             btn.disabled = false;
@@ -1319,9 +1369,9 @@
             document.getElementById('logoPreview').innerHTML =
                 '<button class="remove-logo" id="removeLogo" onclick="removeLogo()" title="Logo entfernen">✕</button>';
 
-            if (document.getElementById('result').classList.contains('show')) {
-                generateQR();
-            }
+            // Bugfix: still neu zeichnen statt generateQR() aufzurufen –
+            // sonst erscheint bei leerem Formular eine sinnlose Fehlermeldung
+            refreshPreview();
         }
 
         function togglePassword() {
