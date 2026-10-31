@@ -430,6 +430,11 @@
             color: #4c5fd7;
         }
 
+        .dropzone:focus-visible {
+            outline: 3px solid #4c5fd7;
+            outline-offset: 2px;
+        }
+
         /* ===== LIVE-WARNUNG ===== */
         .live-warning {
             margin-top: 12px;
@@ -1392,10 +1397,24 @@
                 }
 
                 // href (SVG2) + xlink:href (SVG1.1) für Druck-Programme
+                // Bugfix: Schatten auch im SVG – Vorschau und Export müssen gleich aussehen
+                let filterAttr = '';
+                if (o.logoShadow) {
+                    const blur = Math.max(0.3, total * 0.012);
+                    const off = Math.max(0.2, total * 0.008);
+                    parts.push(
+                        '<defs><filter id="qrLogoShadow" x="-30%" y="-30%" width="170%" height="170%">' +
+                        '<feDropShadow dx="' + off.toFixed(2) + '" dy="' + off.toFixed(2) + '" ' +
+                        'stdDeviation="' + blur.toFixed(2) + '" flood-color="#000000" flood-opacity="0.4"/>' +
+                        '</filter></defs>'
+                    );
+                    filterAttr = ' filter="url(#qrLogoShadow)"';
+                }
+
                 parts.push(
                     `<image href="${o.logo.src}" xlink:href="${o.logo.src}" ` +
                     `x="${lx}" y="${ly}" width="${logoUnits}" height="${logoUnits}" ` +
-                    `preserveAspectRatio="xMidYMid slice"/>`
+                    `preserveAspectRatio="xMidYMid slice"${filterAttr}/>`
                 );
             }
 
@@ -1649,7 +1668,7 @@
                 return;
             }
 
-            lastRender = { text: text, ecLevel: ecLevel };
+            lastRender = { text: text };
             updateResultChrome(o);
             updateLiveWarning(o);
 
