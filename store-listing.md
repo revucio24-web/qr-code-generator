@@ -181,7 +181,7 @@ Erwartetes Ergebnis: **USK 0 / freigegeben ab 0 Jahren**.
 
 ## 8. Screenshots
 
-Ordner `screenshots/`:
+**Deutsch** – Ordner `screenshots/` (für den Store-Eintrag „Deutsch"):
 
 | Datei | Größe | Verwendung |
 |---|---|---|
@@ -192,6 +192,12 @@ Ordner `screenshots/`:
 | `desktop-batch.png` | 1366 × 768 | Store-Seite (Desktop) |
 | `mobile-start.png` | 390 × 844 | PWA-Manifest (Hochformat) |
 | `mobile-result.png` | 390 × 844 | PWA-Manifest (Hochformat) |
+
+**Englisch** – Ordner `screenshots/en/` (für den Store-Eintrag „English"):
+
+Gleiche Dateinamen und Größen, nur mit englischer Oberfläche
+(`desktop-start.png`, `desktop-result.png`, `desktop-design.png`,
+`desktop-vcard.png`, `desktop-batch.png`, `mobile-start.png`, `mobile-result.png`).
 
 Für den Store zusätzlich möglich: **Store-Logo 300 × 300** (aus `icons/icon-512.png`
 skalierbar) und ein **Hero-Bild** (optional).

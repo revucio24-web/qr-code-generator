@@ -49,7 +49,7 @@ Direktaufruf eines Typs: `?type=vcard`, `?type=wifi`, `?type=email`,
 | `sw.js` | Service Worker (offline) |
 | `manifest.json` | PWA-Manifest (Name, Icons, Screenshots, Shortcuts) |
 | `icons/` | App-Icons inkl. `maskable`-Variante mit Safe-Zone |
-| `screenshots/` | Store-Screenshots 1366 × 768 |
+| `screenshots/` | Store-Screenshots 1366 × 768 (Deutsch; Englisch in `screenshots/en/`) |
 
 ## Technik
 
