@@ -1921,9 +1921,27 @@
                 const img = new Image();
                 img.onload = function() {
                     logoImage = img;
-                    document.getElementById('logoPreview').innerHTML =
-                        `<img src="${event.target.result}" alt="${t('logo.alt')}" />` +
-                        `<button class="remove-logo show" id="removeLogo" onclick="removeLogo()" title="${t('logo.remove')}">✕</button>`;
+
+                    // DOM statt innerHTML: eine Datei mit ungewöhnlichem MIME-Typ
+                    // kann so nicht aus dem src-Attribut ausbrechen.
+                    const preview = document.getElementById('logoPreview');
+                    preview.innerHTML = '';
+
+                    const bild = document.createElement('img');
+                    bild.src = event.target.result;
+                    bild.alt = t('logo.alt');
+
+                    const knopf = document.createElement('button');
+                    knopf.type = 'button';
+                    knopf.className = 'remove-logo show';
+                    knopf.id = 'removeLogo';
+                    knopf.title = t('logo.remove');
+                    knopf.textContent = '✕';
+                    knopf.addEventListener('click', removeLogo);
+
+                    preview.appendChild(bild);
+                    preview.appendChild(knopf);
+
                     scheduleLivePreview();
                 };
                 img.onerror = function() {
