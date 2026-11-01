@@ -201,3 +201,17 @@ Gleiche Dateinamen und Größen, nur mit englischer Oberfläche
 
 Für den Store zusätzlich möglich: **Store-Logo 300 × 300** (aus `icons/icon-512.png`
 skalierbar) und ein **Hero-Bild** (optional).
+
+### 9. Werbebilder (optional)
+
+Ordner `screenshots/promo/` – exakt in den von Partner Center verlangten Maßen:
+
+| Datei | Format | Größe | Feld in Partner Center |
+|---|---|---|---|
+| `poster-de.png` | 2:3 | 720 × 1080 | Postergrafik (Store-Eintrag Deutsch) |
+| `poster-en.png` | 2:3 | 720 × 1080 | Postergrafik (Store-Eintrag Englisch) |
+| `box-de.png` | 1:1 | 1080 × 1080 | Verpackungsgrafik (Deutsch) |
+| `box-en.png` | 1:1 | 1080 × 1080 | Verpackungsgrafik (Englisch) |
+
+Beide Felder sind **optional**. Der QR-Code auf dem Poster lässt sich scannen
+und zeigt auf `https://revu-qr.de`.
