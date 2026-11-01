@@ -1,0 +1,7 @@
+# Build-Artefakte (nicht veröffentlichen)
+build/
+
+# Editor / System
+Thumbs.db
+desktop.ini
+.DS_Store

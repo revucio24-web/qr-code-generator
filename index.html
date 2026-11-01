@@ -1000,9 +1000,9 @@
             <div class="form-group" style="margin-top:12px; text-align:left;">
                 <label for="exportSize" class="label-sm" data-i18n="export.label">PNG-Auflösung beim Download:</label>
                 <select id="exportSize">
-                    <option value="512" data-i18n="export.512">512 px</option>
-                    <option value="1024" selected data-i18n="export.1024">1024 px</option>
-                    <option value="2048" data-i18n="export.2048">2048 px (Druck)</option>
+                    <option value="512" data-i18n="export.512">≈ 512 px</option>
+                    <option value="1024" selected data-i18n="export.1024">≈ 1024 px</option>
+                    <option value="2048" data-i18n="export.2048">≈ 2048 px (Druck)</option>
                     <option value="preview" data-i18n="export.preview">Wie Vorschau</option>
                 </select>
             </div>
@@ -1029,7 +1029,7 @@
                 <a href="https://github.com/revucio24-web/qr-code-generator" target="_blank" rel="noopener noreferrer" style="color:#4c5fd7;" data-i18n="footer.source">Quellcode</a> ·
                 <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer" style="color:#4c5fd7;" data-i18n="footer.license">AGPL-3.0</a> ·
                 <a href="datenschutz.html" style="color:#4c5fd7;" data-i18n="footer.privacyLink">Datenschutz</a> ·
-                <a href="mailto:revucio24@gmail.com" style="color:#4c5fd7;" data-i18n="footer.contact">Kontakt</a>
+                <a href="datenschutz.html#kontakt" style="color:#4c5fd7;" data-i18n="footer.contact">Kontakt</a>
             </div>
         </footer>
     </main>
@@ -1049,7 +1049,8 @@
         let logoImage = null;
         let isGenerating = false;
         let lastSVG = null;
-        let lastRender = null;   // { text, ecLevel } des zuletzt gerenderten Codes
+        let lastRender = null;   // { text } des zuletzt gerenderten Codes
+        let lastTotal = 0;       // Module inkl. Ruhezone – für echte Exportgröße
 
         /* ================= Helpers ================= */
 
@@ -1301,6 +1302,9 @@
             const scale = Math.max(2, Math.floor(targetPx / total));
             const px = total * scale;
 
+            // Für die Größenangabe im Ergebnisbereich: Module * ganzzahlige Skalierung
+            lastTotal = total;
+
             canvas.width = px;
             canvas.height = px;
 
@@ -1485,9 +1489,16 @@
             const exportInfo = document.getElementById('exportInfo');
 
             if (exportInfo) {
-                // Bugfix: muss die Download-Größe zeigen, nicht die Vorschau
+                // Bugfix: muss die Download-Größe zeigen, nicht die Vorschau.
+                // Der Encoder skaliert ganzzahlig pro Modul – deshalb kann die
+                // echte Größe minimal unter der gewählten liegen (512 -> 495).
                 const sel = document.getElementById('exportSize').value;
-                const dl = sel === 'preview' ? px + ' px' : parseInt(sel, 10) + ' px';
+                let dl = px + ' px';
+                if (sel !== 'preview' && lastTotal) {
+                    const gewuenscht = parseInt(sel, 10);
+                    const echt = Math.max(2, Math.floor(gewuenscht / lastTotal)) * lastTotal;
+                    dl = echt + ' px';
+                }
                 exportInfo.textContent = t('exportInfo', { px: px, dl: dl });
             }
 
@@ -1911,8 +1922,8 @@
                 img.onload = function() {
                     logoImage = img;
                     document.getElementById('logoPreview').innerHTML =
-                        `<img src="${event.target.result}" alt="Logo Vorschau" />` +
-                        `<button class="remove-logo show" id="removeLogo" onclick="removeLogo()" title="Logo entfernen">✕</button>`;
+                        `<img src="${event.target.result}" alt="${t('logo.alt')}" />` +
+                        `<button class="remove-logo show" id="removeLogo" onclick="removeLogo()" title="${t('logo.remove')}">✕</button>`;
                     scheduleLivePreview();
                 };
                 img.onerror = function() {
@@ -2324,6 +2335,11 @@
             // Preset-Buttons: Screenreader-Name aus dem übersetzten Titel
             document.querySelectorAll('.preset').forEach((btn) => {
                 btn.setAttribute('aria-label', t('preset.ariaPrefix') + ' ' + btn.getAttribute('title'));
+            });
+
+            // Sprachknöpfe: "DE" ist für Screenreader zu knapp
+            document.querySelectorAll('[data-lang-btn]').forEach((btn) => {
+                btn.setAttribute('aria-label', t('lang.' + btn.getAttribute('data-lang-btn')));
             });
 
             // Der Passwort-Platzhalter hängt an der Verschlüsselung
