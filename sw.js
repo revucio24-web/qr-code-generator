@@ -8,12 +8,13 @@
  *   - Fremde Herkünfte: nicht anfassen (die App lädt ohnehin nichts Externes).
  */
 
-const CACHE_NAME = 'revuqr-v9';
+const CACHE_NAME = 'revuqr-v10';
 
 const PRECACHE = [
   './',
   './index.html',
   './datenschutz.html',
+  './kontakt.html',
   './i18n.js',
   './qrcode.min.js',
   './manifest.json',

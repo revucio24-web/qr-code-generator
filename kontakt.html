@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#667eea">
+    <meta name="robots" content="index, follow">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%B1%3C/text%3E%3C/svg%3E">
+    <title>Kontakt – Revu QR</title>
+    <meta name="description" content="Kontakt zu Revu QR: Fragen, Fehlerberichte und Wünsche.">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
+            color: #333;
+            line-height: 1.65;
+        }
+
+        main {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+            max-width: 620px;
+            width: 100%;
+        }
+
+        .top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+
+        .back {
+            color: #4c5fd7;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .back:hover { text-decoration: underline; }
+
+        .lang-switch {
+            display: flex;
+            gap: 4px;
+            background: #f1f3f9;
+            border-radius: 999px;
+            padding: 3px;
+        }
+
+        .lang-btn {
+            border: none;
+            background: none;
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 600;
+            color: #5f6670;
+            padding: 5px 11px;
+            border-radius: 999px;
+            cursor: pointer;
+        }
+
+        .lang-btn.active { background: #4c5fd7; color: #fff; }
+
+        .lang-btn:focus-visible,
+        .back:focus-visible { outline: 3px solid #4c5fd7; outline-offset: 2px; }
+
+        h1 { font-size: 28px; margin-bottom: 6px; line-height: 1.25; }
+
+        .lead { color: #555; font-size: 15px; margin-bottom: 24px; }
+
+        h2 { font-size: 16px; margin: 22px 0 8px; color: #2b3040; }
+
+        p, li { font-size: 15px; margin-bottom: 8px; }
+
+        .karte {
+            background: #f4f6fc;
+            border-left: 4px solid #4c5fd7;
+            border-radius: 8px;
+            padding: 16px 18px;
+            margin-bottom: 16px;
+        }
+
+        .adresse {
+            font-size: 17px;
+            font-weight: 600;
+            color: #1b2340;
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            margin-top: 10px;
+            padding: 8px 14px;
+            font-family: inherit;
+            font-size: 14px;
+            color: #2b3040;
+            background: #fff;
+            border: 1px solid #c9d2f5;
+            border-radius: 999px;
+            cursor: pointer;
+        }
+
+        .copy-btn:hover { background: #e0e6ff; }
+
+        .copy-btn:focus-visible { outline: 3px solid #4c5fd7; outline-offset: 2px; }
+
+        .copy-btn.kopiert {
+            background: #1e7e34;
+            border-color: #1e7e34;
+            color: #fff;
+        }
+
+        a { color: #4c5fd7; }
+
+        .hinweis {
+            font-size: 13px;
+            color: #666;
+            border-top: 1px solid #eee;
+            padding-top: 14px;
+            margin-top: 22px;
+        }
+
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            main { padding: 22px 18px; border-radius: 14px; }
+            h1 { font-size: 23px; }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <div class="top">
+            <a class="back" href="./" data-de="← Zurück zu Revu QR" data-en="← Back to Revu QR">← Zurück zu Revu QR</a>
+            <div class="lang-switch" role="group" aria-label="Sprache wechseln">
+                <button type="button" class="lang-btn" data-set="de" onclick="setLang('de')" aria-pressed="true">DE</button>
+                <button type="button" class="lang-btn" data-set="en" onclick="setLang('en')" aria-pressed="false" lang="en">EN</button>
+            </div>
+        </div>
+
+        <h1 data-de="Kontakt" data-en="Contact">Kontakt</h1>
+        <p class="lead" data-de="Revu QR ist ein kostenloses Projekt einer Einzelperson. Fragen, Fehlerberichte und Wünsche sind willkommen."
+           data-en="Revu QR is a free project run by one person. Questions, bug reports and feature requests are welcome.">
+            Revu QR ist ein kostenloses Projekt einer Einzelperson. Fragen, Fehlerberichte und Wünsche sind willkommen.
+        </p>
+
+        <div class="karte">
+            <p data-de="E-Mail" data-en="Email" style="margin-bottom:4px; font-size:13px; color:#5f6670;">E-Mail</p>
+            <div class="adresse">revucio24@gmail.com</div>
+            <button type="button" class="copy-btn" id="copyMail" onclick="copyMail()" data-de="Adresse kopieren" data-en="Copy address">Adresse kopieren</button>
+        </div>
+
+        <h2 data-de="Fehler melden" data-en="Report a bug">Fehler melden</h2>
+        <p data-de="Wenn ein QR-Code nicht scanbar ist oder etwas nicht funktioniert, hilft eine kurze Beschreibung. Am besten mit: welche Einstellungen (Fehlerkorrektur, Logo, Farben) und welcher QR-Typ."
+           data-en="If a QR code will not scan or something does not work, a short description helps. Best include: which settings (error correction, logo, colours) and which QR type.">
+            Wenn ein QR-Code nicht scanbar ist oder etwas nicht funktioniert, hilft eine kurze Beschreibung. Am besten mit: welche Einstellungen (Fehlerkorrektur, Logo, Farben) und welcher QR-Typ.
+        </p>
+        <p><a href="https://github.com/revucio24-web/qr-code-generator/issues" target="_blank" rel="noopener noreferrer">github.com/revucio24-web/qr-code-generator/issues</a></p>
+
+        <p class="hinweis" data-de="Bitte schicken Sie keine Passwörter, WLAN-Zugangsdaten oder persönliche Kontaktdaten mit. Für die Fehlersuche genügt ein Beispiel ohne echte Daten."
+           data-en="Please do not send passwords, WiFi credentials or personal contact details. A sample without real data is enough to reproduce a problem.">
+            Bitte schicken Sie keine Passwörter, WLAN-Zugangsdaten oder persönliche Kontaktdaten mit. Für die Fehlersuche genügt ein Beispiel ohne echte Daten.
+        </p>
+    </main>
+
+    <script>
+        const KEY = 'revuqr.lang';
+
+        function setLang(lang) {
+            const ziel = lang === 'en' ? 'en' : 'de';
+            try { localStorage.setItem(KEY, ziel); } catch (e) { /* privater Modus */ }
+
+            document.documentElement.lang = ziel;
+            document.title = (ziel === 'en' ? 'Contact – Revu QR' : 'Kontakt – Revu QR');
+
+            document.querySelectorAll('[data-' + ziel + ']').forEach((el) => {
+                el.textContent = el.getAttribute('data-' + ziel);
+            });
+
+            document.querySelectorAll('[data-set]').forEach((btn) => {
+                const aktiv = btn.getAttribute('data-set') === ziel;
+                btn.classList.toggle('active', aktiv);
+                btn.setAttribute('aria-pressed', aktiv ? 'true' : 'false');
+            });
+        }
+
+        (function () {
+            let gespeichert = null;
+            try { gespeichert = localStorage.getItem(KEY); } catch (e) { gespeichert = null; }
+            const nav = (navigator.language || 'de').toLowerCase();
+            setLang(gespeichert || (nav.indexOf('de') === 0 ? 'de' : 'en'));
+        })();
+
+        function copyMail() {
+            const adresse = 'revucio24@gmail.com';
+            const btn = document.getElementById('copyMail');
+            const englisch = document.documentElement.lang === 'en';
+
+            const fertig = () => {
+                btn.classList.add('kopiert');
+                btn.textContent = englisch ? 'Copied ✓' : 'Kopiert ✓';
+                setTimeout(() => {
+                    btn.classList.remove('kopiert');
+                    btn.textContent = englisch ? 'Copy address' : 'Adresse kopieren';
+                }, 2000);
+            };
+
+            const ersatz = () => {
+                const tmp = document.createElement('textarea');
+                tmp.value = adresse;
+                tmp.setAttribute('readonly', '');
+                tmp.style.position = 'fixed';
+                tmp.style.opacity = '0';
+                document.body.appendChild(tmp);
+                tmp.select();
+                try { document.execCommand('copy'); fertig(); } catch (e) { /* nichts */ }
+                document.body.removeChild(tmp);
+            };
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(adresse).then(fertig).catch(ersatz);
+            } else {
+                ersatz();
+            }
+        }
+    </script>
+</body>
+</html>

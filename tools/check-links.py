@@ -17,12 +17,15 @@ def lies(p):
 
 index = lies('index.html')
 priv = lies('datenschutz.html')
+kontakt = lies('kontakt.html')
 i18n = lies('i18n.js')
 manifest = json.loads(lies('manifest.json'))
 
+SEITEN = (('index.html', index), ('datenschutz.html', priv), ('kontakt.html', kontakt))
+
 # ---------------------------------------------------------------- 1. Links
 print('== 1. Links ==')
-for name, html in (('index.html', index), ('datenschutz.html', priv)):
+for name, html in SEITEN:
     for href in re.findall(r'href="([^"]+)"', html):
         if href.startswith('data:') or '${' in href:
             continue
@@ -49,7 +52,7 @@ for name, html in (('index.html', index), ('datenschutz.html', priv)):
         print('  ok:', name, '->', href)
 
 # alle <a> mit target=_blank brauchen rel=noopener
-for name, html in (('index.html', index), ('datenschutz.html', priv)):
+for name, html in SEITEN:
     for tag in re.findall(r'<a [^>]*>', html):
         if 'target="_blank"' in tag and 'noopener' not in tag:
             fehler.append('%s: target=_blank ohne rel=noopener -> %s' % (name, tag[:70]))
@@ -104,7 +107,7 @@ print('  separat geprueft durch _i18ncheck.js (exakte Auswertung der Sprachdatei
 # ---------------------------------------------------------------- 4. Externe Quellen
 print('\n== 4. Externe Ressourcen ==')
 extern = []
-for name, html in (('index.html', index), ('datenschutz.html', priv)):
+for name, html in SEITEN:
     for tag in re.findall(r'<(?:script|link|img|iframe|source)[^>]*>', html):
         for url in re.findall(r'(?:src|href)="(https?://[^"]+)"', tag):
             extern.append('%s: %s' % (name, url))
@@ -135,7 +138,7 @@ else:
 
 # ---------------------------------------------------------------- 6. Struktur
 print('\n== 6. Struktur ==')
-for name, html in (('index.html', index), ('datenschutz.html', priv)):
+for name, html in SEITEN:
     if html.count('<div') != html.count('</div>'):
         fehler.append('%s: <div> unausgeglichen (%d/%d)' % (name, html.count('<div'), html.count('</div>')))
     if html.count('{') != html.count('}'):
