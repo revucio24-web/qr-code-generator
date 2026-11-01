@@ -1,8 +1,10 @@
 {
-  "name": "QR-Code Generator Pro",
-  "short_name": "QR Generator",
-  "description": "QR-Codes erstellen – vCard, WiFi, E-Mail, Ecken-Farben, PNG und SVG. Alle Berechnungen laufen lokal im Browser.",
+  "id": "/qr-code-generator/",
+  "name": "Revu QR",
+  "short_name": "Revu QR",
+  "description": "QR-Codes erstellen – vCard, WiFi, E-Mail, Logo, PNG und SVG. Alles läuft lokal im Browser. Create QR codes locally – no server, no tracking.",
   "lang": "de",
+  "dir": "ltr",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -24,10 +26,67 @@
       "purpose": "any"
     },
     {
-      "src": "icons/icon-512.png",
+      "src": "icons/icon-512-maskable.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshots/desktop-start.png",
+      "sizes": "1366x768",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "QR-Code erstellen – Startseite"
+    },
+    {
+      "src": "screenshots/desktop-result.png",
+      "sizes": "1366x768",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Fertiger QR-Code mit PNG- und SVG-Download"
+    },
+    {
+      "src": "screenshots/desktop-design.png",
+      "sizes": "1366x768",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Farben, Größe und Ecken anpassen"
+    },
+    {
+      "src": "screenshots/desktop-vcard.png",
+      "sizes": "1366x768",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "vCard-Kontakt als QR-Code"
+    },
+    {
+      "src": "screenshots/desktop-batch.png",
+      "sizes": "1366x768",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Stapelverarbeitung als ZIP"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "vCard",
+      "short_name": "vCard",
+      "url": "./?type=vcard",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "WiFi",
+      "short_name": "WiFi",
+      "url": "./?type=wifi",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Text / URL",
+      "short_name": "Text",
+      "url": "./?type=text",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
     }
   ]
 }

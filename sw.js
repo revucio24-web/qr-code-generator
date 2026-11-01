@@ -1,4 +1,4 @@
-/* Service Worker – QR-Code Generator Pro
+/* Service Worker – Revu QR
  *
  * Ziel: nach dem ersten Besuch vollständig offline nutzbar.
  *
@@ -8,24 +8,42 @@
  *   - Fremde Herkünfte: nicht anfassen (die App lädt ohnehin nichts Externes).
  */
 
-const CACHE_NAME = 'qr-generator-v5';
+const CACHE_NAME = 'revuqr-v6';
 
 const PRECACHE = [
   './',
   './index.html',
+  './datenschutz.html',
+  './i18n.js',
   './qrcode.min.js',
   './manifest.json',
   './icons/icon-192.png',
-  './icons/icon-512.png'
+  './icons/icon-512.png',
+  './icons/icon-512-maskable.png'
 ];
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      // cache: 'reload' -> HTTP-Cache umgehen, wirklich die Datei vom Server holen
-      .then((cache) => cache.addAll(PRECACHE.map((u) => new Request(u, { cache: 'reload' }))))
-      .then(() => self.skipWaiting())
-  );
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE_NAME);
+
+    // Einzeln statt addAll: eine einzelne fehlende Datei darf die komplette
+    // Offline-Fähigkeit nicht verhindern.
+    for (const u of PRECACHE) {
+      try {
+        // cache: 'reload' -> HTTP-Cache umgehen, wirklich die Datei vom Server holen
+        const res = await fetch(new Request(u, { cache: 'reload' }));
+        if (res && res.status === 200) {
+          await cache.put(u, res);
+        } else {
+          console.warn('[sw] nicht gespeichert:', u, res && res.status);
+        }
+      } catch (e) {
+        console.warn('[sw] Fehler beim Speichern:', u, e && e.message);
+      }
+    }
+
+    await self.skipWaiting();
+  })());
 });
 
 self.addEventListener('activate', (event) => {
@@ -77,11 +95,15 @@ async function handleDocument(req) {
     clearTimeout(timer);
 
     if (res && res.status === 200) {
-      cache.put('./index.html', res.clone()).catch(() => {});
+      // Bugfix: unter der tatsächlich angefragten Adresse ablegen –
+      // sonst überschreibt z. B. datenschutz.html den Eintrag von index.html.
+      // Query-Strings (?type=vcard) landen nicht als eigene Einträge im Cache.
+      const url = new URL(req.url);
+      cache.put(new Request(url.origin + url.pathname), res.clone()).catch(() => {});
       return res;
     }
     if (res && res.status !== 200) {
-      const fallback = await cache.match('./index.html');
+      const fallback = await cache.match(req, { ignoreSearch: true });
       if (fallback) return fallback;
       return res;
     }
@@ -89,20 +111,17 @@ async function handleDocument(req) {
     // offline oder Timeout -> Cache
   }
 
-  // 2) Offline: Cache (Query-Strings ignorieren, z. B. ?utm=...)
-  const cached =
-    (await cache.match(req, { ignoreSearch: true })) ||
-    (await cache.match('./index.html')) ||
-    (await cache.match('./'));
-
+  // 2) Offline: Cache (Query-Strings ignorieren, z. B. ?utm=... oder ?type=vcard)
+  const cached = await cache.match(req, { ignoreSearch: true });
   if (cached) return cached;
 
   // 3) Letzte Rettung: Hinweis statt Browser-Fehlerseite
   return new Response(
     '<!doctype html><meta charset="utf-8"><title>Offline</title>' +
-    '<body style="font-family:system-ui;padding:2rem">' +
-    '<h1>Offline</h1><p>Diese Seite wurde noch nicht gespeichert. ' +
-    'Bitte einmal mit Internetverbindung öffnen.</p>',
+    '<body style="font-family:system-ui;padding:2rem;line-height:1.6">' +
+    '<h1>Offline</h1>' +
+    '<p>Diese Seite wurde noch nicht gespeichert. Bitte einmal mit Internetverbindung öffnen.</p>' +
+    '<p lang="en">This page has not been saved yet. Please open it once while online.</p>',
     { status: 503, headers: { 'Content-Type': 'text/html; charset=utf-8' } }
   );
 }

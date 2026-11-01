@@ -7,8 +7,8 @@
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%B1%3C/text%3E%3C/svg%3E">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icons/icon-192.png">
-    <title>QR-Code Generator Pro</title>
-    <meta name="description" content="QR-Codes erstellen mit vCard, WiFi, E-Mail und Logo – inklusive SVG-Export, Eckerfarben und Druckbogen. Alle Berechnungen laufen lokal im Browser, ohne Datenübertragung.">
+    <title>Revu QR – QR-Code Generator</title>
+    <meta name="description" content="QR-Codes erstellen mit vCard, WiFi, E-Mail und Logo – inklusive SVG-Export, Eckenfarben und Druckbogen. Alles läuft lokal im Browser, ohne Datenübertragung.">
     <style>
         * {
             margin: 0;
@@ -52,6 +52,48 @@
             color: #666;
             margin-bottom: 30px;
             font-size: 14px;
+        }
+
+        /* ===== SPRACHWAHL ===== */
+        .app-header {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .lang-switch {
+            align-self: flex-end;
+            display: flex;
+            gap: 4px;
+            background: #f1f3f9;
+            border-radius: 999px;
+            padding: 3px;
+            margin-bottom: 6px;
+        }
+
+        .lang-btn {
+            border: none;
+            background: none;
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.4px;
+            color: #5f6670;
+            padding: 5px 11px;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .lang-btn:hover { background: #e4e8f5; }
+
+        .lang-btn.active {
+            background: #4c5fd7;
+            color: #ffffff;
+        }
+
+        .lang-btn:focus-visible {
+            outline: 3px solid #4c5fd7;
+            outline-offset: 2px;
         }
 
         /* ===== TABS ===== */
@@ -642,33 +684,40 @@
 </head>
 <body>
     <main class="container">
-        <h1>📱 QR-Code Generator Pro</h1>        <p class="subtitle">Erstelle professionelle QR-Codes – 100% kostenlos & lokal</p>
+        <header class="app-header">
+            <div class="lang-switch" role="group" aria-label="Sprache wechseln" data-i18n-aria="lang.switch">
+                <button type="button" class="lang-btn" data-lang-btn="de" onclick="setLang('de')" aria-pressed="true" lang="de">DE</button>
+                <button type="button" class="lang-btn" data-lang-btn="en" onclick="setLang('en')" aria-pressed="false" lang="en">EN</button>
+            </div>
+            <h1>Revu QR</h1>
+            <p class="subtitle" data-i18n="app.tagline">QR-Codes erstellen – kostenlos, ohne Konto, ohne Server.</p>
+        </header>
 
-        <div class="tabs" role="tablist" aria-label="Bereiche">
-            <button class="tab active" role="tab" aria-selected="true" onclick="switchTab('content', this)">Inhalt</button>
-            <button class="tab" role="tab" aria-selected="false" onclick="switchTab('design', this)">Design</button>
-            <button class="tab" role="tab" aria-selected="false" onclick="switchTab('logo', this)">Logo</button>
-            <button class="tab" role="tab" aria-selected="false" onclick="switchTab('batch', this)">Stapel</button>
+        <div class="tabs" role="tablist" aria-label="Bereiche" data-i18n-aria="tabs.aria">
+            <button class="tab active" role="tab" aria-selected="true" onclick="switchTab('content', this)" data-i18n="tab.content">Inhalt</button>
+            <button class="tab" role="tab" aria-selected="false" onclick="switchTab('design', this)" data-i18n="tab.design">Design</button>
+            <button class="tab" role="tab" aria-selected="false" onclick="switchTab('logo', this)" data-i18n="tab.logo">Logo</button>
+            <button class="tab" role="tab" aria-selected="false" onclick="switchTab('batch', this)" data-i18n="tab.batch">Stapel</button>
         </div>
 
         <!-- Tab: Inhalt -->
         <div id="content" class="tab-content active">
             <div class="form-group">
-                <label for="qrType">QR-Code Typ:</label>
+                <label for="qrType" data-i18n="type.label">QR-Code Typ:</label>
                 <select id="qrType">
-                    <option value="text">Text/URL</option>
-                    <option value="vcard">vCard (Kontakt)</option>
-                    <option value="wifi">WiFi (SSID + Passwort)</option>
-                    <option value="email">E-Mail</option>
-                    <option value="phone">Telefonnummer</option>
-                    <option value="sms">SMS</option>
+                    <option value="text" data-i18n="type.text">Text/URL</option>
+                    <option value="vcard" data-i18n="type.vcard">vCard (Kontakt)</option>
+                    <option value="wifi" data-i18n="type.wifi">WiFi (SSID + Passwort)</option>
+                    <option value="email" data-i18n="type.email">E-Mail</option>
+                    <option value="phone" data-i18n="type.phone">Telefonnummer</option>
+                    <option value="sms" data-i18n="type.sms">SMS</option>
                 </select>
             </div>
 
             <div id="textFields" class="fields">
                 <div class="form-group">
-                    <label for="text">Text oder URL:</label>
-                    <input type="text" id="text" placeholder="z.B. https://meine-website.de" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" />
+                    <label for="text" data-i18n="text.label">Text oder URL:</label>
+                    <input type="text" id="text" data-i18n-ph="text.ph" placeholder="z.B. https://meine-website.de" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" />
                 </div>
             </div>
 
@@ -676,90 +725,90 @@
             <div id="vcardFields" class="fields" style="display: none;">
                 <div class="grid-2">
                     <div class="form-group tight">
-                        <label for="vcFirst">Vorname:</label>
-                        <input type="text" id="vcFirst" placeholder="Max" autocomplete="off" />
+                        <label for="vcFirst" data-i18n="vc.first">Vorname:</label>
+                        <input type="text" id="vcFirst" data-i18n-ph="vc.firstPh" placeholder="Max" autocomplete="off" />
                     </div>
                     <div class="form-group tight">
-                        <label for="vcLast">Nachname:</label>
-                        <input type="text" id="vcLast" placeholder="Mustermann" autocomplete="off" />
+                        <label for="vcLast" data-i18n="vc.last">Nachname:</label>
+                        <input type="text" id="vcLast" data-i18n-ph="vc.lastPh" placeholder="Mustermann" autocomplete="off" />
                     </div>
                     <div class="form-group tight">
-                        <label for="vcTel">Telefon:</label>
-                        <input type="tel" id="vcTel" placeholder="+49 123 456789" inputmode="tel" autocomplete="off" />
+                        <label for="vcTel" data-i18n="vc.tel">Telefon:</label>
+                        <input type="tel" id="vcTel" data-i18n-ph="vc.telPh" placeholder="+49 123 456789" inputmode="tel" autocomplete="off" />
                     </div>
                     <div class="form-group tight">
-                        <label for="vcEmail">E-Mail:</label>
-                        <input type="email" id="vcEmail" placeholder="max@example.com" inputmode="email" autocomplete="off" autocapitalize="off" spellcheck="false" />
+                        <label for="vcEmail" data-i18n="vc.email">E-Mail:</label>
+                        <input type="email" id="vcEmail" data-i18n-ph="vc.emailPh" placeholder="max@example.com" inputmode="email" autocomplete="off" autocapitalize="off" spellcheck="false" />
                     </div>
                     <div class="form-group tight">
-                        <label for="vcOrg">Firma:</label>
-                        <input type="text" id="vcOrg" placeholder="Musterfirma GmbH" autocomplete="off" />
+                        <label for="vcOrg" data-i18n="vc.org">Firma:</label>
+                        <input type="text" id="vcOrg" data-i18n-ph="vc.orgPh" placeholder="Musterfirma GmbH" autocomplete="off" />
                     </div>
                     <div class="form-group tight">
-                        <label for="vcUrl">Webadresse:</label>
-                        <input type="text" id="vcUrl" placeholder="https://meine-website.de" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" />
+                        <label for="vcUrl" data-i18n="vc.url">Webadresse:</label>
+                        <input type="text" id="vcUrl" data-i18n-ph="vc.urlPh" placeholder="https://meine-website.de" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" />
                     </div>
                 </div>
-                <div class="error-msg" id="vcardError">Bitte mindestens Vor- oder Nachname ausfüllen</div>
-                <div class="hint">Wird als vCard 3.0 gespeichert – Kontakte lassen sich direkt im Adressbuch ablegen.</div>
+                <div class="error-msg" id="vcardError" data-i18n="vc.errorName">Bitte mindestens Vor- oder Nachname ausfüllen</div>
+                <div class="hint" data-i18n="vc.hint">Wird als vCard 3.0 gespeichert – Kontakte lassen sich direkt im Adressbuch ablegen.</div>
             </div>
 
             <div id="wifiFields" class="fields" style="display: none;">
                 <div class="form-group">
-                    <label for="ssid">Netzwerkname (SSID):</label>
-                    <input type="text" id="ssid" placeholder="MeinWLAN" autocomplete="off" autocapitalize="off" spellcheck="false" />
-                    <div class="error-msg" id="ssidError">SSID darf nicht leer sein</div>
+                    <label for="ssid" data-i18n="wifi.ssid">Netzwerkname (SSID):</label>
+                    <input type="text" id="ssid" data-i18n-ph="wifi.ssidPh" placeholder="MeinWLAN" autocomplete="off" autocapitalize="off" spellcheck="false" />
+                    <div class="error-msg" id="ssidError" data-i18n="wifi.ssidError">SSID darf nicht leer sein</div>
                 </div>
                 <div class="form-group">
-                    <label for="password">Passwort:</label>
+                    <label for="password" data-i18n="wifi.pw">Passwort:</label>
                     <div class="password-toggle">
-                        <input type="password" id="password" placeholder="geheim123" autocomplete="off" />
-                        <button type="button" onclick="togglePassword()" aria-label="Passwort anzeigen">👁️</button>
+                        <input type="password" id="password" data-i18n-ph="wifi.pwPh" placeholder="geheim123" autocomplete="off" />
+                        <button type="button" onclick="togglePassword()" aria-label="Passwort anzeigen" data-i18n-aria="wifi.pwShow">👁️</button>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="encryption">Verschlüsselung:</label>
+                    <label for="encryption" data-i18n="wifi.enc">Verschlüsselung:</label>
                     <select id="encryption">
-                        <option value="WPA">WPA/WPA2</option>
-                        <option value="WEP">WEP</option>
-                        <option value="nopass">Keine</option>
+                        <option value="WPA" data-i18n="wifi.wpa">WPA/WPA2</option>
+                        <option value="WEP" data-i18n="wifi.wep">WEP</option>
+                        <option value="nopass" data-i18n="wifi.none">Keine</option>
                     </select>
                 </div>
             </div>
 
             <div id="emailFields" class="fields" style="display: none;">
                 <div class="form-group">
-                    <label for="email">E-Mail-Adresse:</label>
-                    <input type="email" id="email" placeholder="info@example.com" inputmode="email" autocomplete="off" autocapitalize="off" spellcheck="false" />
-                    <div class="error-msg" id="emailError">Ungültige E-Mail-Adresse</div>
+                    <label for="email" data-i18n="email.label">E-Mail-Adresse:</label>
+                    <input type="email" id="email" data-i18n-ph="email.ph" placeholder="info@example.com" inputmode="email" autocomplete="off" autocapitalize="off" spellcheck="false" />
+                    <div class="error-msg" id="emailError" data-i18n="email.error">Ungültige E-Mail-Adresse</div>
                 </div>
                 <div class="form-group">
-                    <label for="subject">Betreff (optional):</label>
-                    <input type="text" id="subject" placeholder="Hallo" />
+                    <label for="subject" data-i18n="email.subject">Betreff (optional):</label>
+                    <input type="text" id="subject" data-i18n-ph="email.subjectPh" placeholder="Hallo" />
                 </div>
                 <div class="form-group">
-                    <label for="body">Nachricht (optional):</label>
-                    <textarea id="body" placeholder="Nachricht..."></textarea>
+                    <label for="body" data-i18n="email.body">Nachricht (optional):</label>
+                    <textarea id="body" data-i18n-ph="email.bodyPh" placeholder="Nachricht..."></textarea>
                 </div>
             </div>
 
             <div id="phoneFields" class="fields" style="display: none;">
                 <div class="form-group">
-                    <label for="phone">Telefonnummer:</label>
-                    <input type="tel" id="phone" placeholder="+49 123 456789" inputmode="tel" />
-                    <div class="error-msg" id="phoneError">Telefonnummer darf nicht leer sein</div>
+                    <label for="phone" data-i18n="phone.label">Telefonnummer:</label>
+                    <input type="tel" id="phone" data-i18n-ph="phone.ph" placeholder="+49 123 456789" inputmode="tel" />
+                    <div class="error-msg" id="phoneError" data-i18n="phone.error">Telefonnummer darf nicht leer sein</div>
                 </div>
             </div>
 
             <div id="smsFields" class="fields" style="display: none;">
                 <div class="form-group">
-                    <label for="smsPhone">Telefonnummer:</label>
+                    <label for="smsPhone" data-i18n="sms.phone">Telefonnummer:</label>
                     <input type="tel" id="smsPhone" placeholder="+49 123 456789" inputmode="tel" />
-                    <div class="error-msg" id="smsPhoneError">Telefonnummer darf nicht leer sein</div>
+                    <div class="error-msg" id="smsPhoneError" data-i18n="sms.phoneError">Telefonnummer darf nicht leer sein</div>
                 </div>
                 <div class="form-group">
-                    <label for="smsMessage">Nachricht:</label>
-                    <input type="text" id="smsMessage" placeholder="Hallo!" />
+                    <label for="smsMessage" data-i18n="sms.msg">Nachricht:</label>
+                    <input type="text" id="smsMessage" data-i18n-ph="sms.msgPh" placeholder="Hallo!" />
                 </div>
             </div>
         </div>
@@ -767,15 +816,15 @@
         <!-- Tab: Design -->
         <div id="design" class="tab-content">
             <div class="form-group">
-                <label>Farben:</label>
+                <label data-i18n="design.colors">Farben:</label>
                 <div class="color-group">
                     <div>
-                        <label for="darkColor" class="label-sm">Dunkel (Module):</label>
+                        <label for="darkColor" class="label-sm" data-i18n="design.dark">Dunkel (Module):</label>
                         <input type="color" id="darkColor" value="#000000" />
                         <div class="color-value" id="darkColorValue">#000000</div>
                     </div>
                     <div>
-                        <label for="lightColor" class="label-sm">Hell (Hintergrund):</label>
+                        <label for="lightColor" class="label-sm" data-i18n="design.light">Hell (Hintergrund):</label>
                         <input type="color" id="lightColor" value="#ffffff" />
                         <div class="color-value" id="lightColorValue">#FFFFFF</div>
                     </div>
@@ -783,19 +832,19 @@
             </div>
 
             <div class="form-group">
-                <label>Farb-Presets:</label>
+                <label data-i18n="design.presets">Farb-Presets:</label>
                 <div class="color-presets">
-                    <button type="button" class="preset" style="background:#000;" onclick="applyPreset('#000000','#ffffff')" title="Klassisch" aria-label="Preset Klassisch"></button>
-                    <button type="button" class="preset" style="background:#667eea;" onclick="applyPreset('#667eea','#ffffff')" title="Lila" aria-label="Preset Lila"></button>
-                    <button type="button" class="preset" style="background:#e74c3c;" onclick="applyPreset('#e74c3c','#ffffff')" title="Rot" aria-label="Preset Rot"></button>
-                    <button type="button" class="preset" style="background:#27ae60;" onclick="applyPreset('#27ae60','#ffffff')" title="Grün" aria-label="Preset Grün"></button>
-                    <button type="button" class="preset" style="background:#2c3e50;" onclick="applyPreset('#2c3e50','#ecf0f1')" title="Dunkel" aria-label="Preset Dunkel"></button>
-                    <button type="button" class="preset" style="background:#f39c12;" onclick="applyPreset('#f39c12','#ffffff')" title="Orange" aria-label="Preset Orange"></button>
+                    <button type="button" class="preset" style="background:#000;" onclick="applyPreset('#000000','#ffffff')" title="Klassisch" data-i18n-title="preset.classic" aria-label="Preset Klassisch"></button>
+                    <button type="button" class="preset" style="background:#667eea;" onclick="applyPreset('#667eea','#ffffff')" title="Lila" data-i18n-title="preset.purple" aria-label="Preset Lila"></button>
+                    <button type="button" class="preset" style="background:#e74c3c;" onclick="applyPreset('#e74c3c','#ffffff')" title="Rot" data-i18n-title="preset.red" aria-label="Preset Rot"></button>
+                    <button type="button" class="preset" style="background:#27ae60;" onclick="applyPreset('#27ae60','#ffffff')" title="Grün" data-i18n-title="preset.green" aria-label="Preset Grün"></button>
+                    <button type="button" class="preset" style="background:#2c3e50;" onclick="applyPreset('#2c3e50','#ecf0f1')" title="Dunkel" data-i18n-title="preset.dark" aria-label="Preset Dunkel"></button>
+                    <button type="button" class="preset" style="background:#f39c12;" onclick="applyPreset('#f39c12','#ffffff')" title="Orange" data-i18n-title="preset.orange" aria-label="Preset Orange"></button>
                 </div>
             </div>
 
             <div class="form-group">
-                <label>Größe:</label>
+                <label for="size" data-i18n="design.size">Größe:</label>
                 <div class="slider-group">
                     <input type="range" id="size" min="128" max="512" value="256" step="32" />
                     <span class="slider-value" id="sizeValue">256px</span>
@@ -803,34 +852,34 @@
             </div>
 
             <div class="form-group">
-                <label for="errorCorrection">Fehlerkorrektur:</label>
+                <label for="errorCorrection" data-i18n="design.ec">Fehlerkorrektur:</label>
                 <select id="errorCorrection">
-                    <option value="L">Niedrig (7%)</option>
-                    <option value="M">Mittel (15%)</option>
-                    <option value="Q">Hoch (25%)</option>
-                    <option value="H" selected>Sehr hoch (30%) – empfohlen für Logos</option>
+                    <option value="L" data-i18n="ec.L">Niedrig (7%)</option>
+                    <option value="M" data-i18n="ec.M">Mittel (15%)</option>
+                    <option value="Q" data-i18n="ec.Q">Hoch (25%)</option>
+                    <option value="H" selected data-i18n="ec.H">Sehr hoch (30%) – empfohlen für Logos</option>
                 </select>
             </div>
 
             <div class="checkbox-group">
                 <input type="checkbox" id="transparentBg" />
-                <label for="transparentBg">Transparenter Hintergrund</label>
+                <label for="transparentBg" data-i18n="design.transparent">Transparenter Hintergrund</label>
             </div>
             <div class="checkbox-group" style="margin-top:-8px; margin-bottom:10px; padding-left:32px;">
                 <input type="checkbox" id="dontAskTransparent" style="width:18px;height:18px;" />
-                <label for="dontAskTransparent" style="font-size:13px;">Bei transparentem Hintergrund nicht mehr nachfragen</label>
+                <label for="dontAskTransparent" style="font-size:13px;" data-i18n="design.dontAsk">Bei transparentem Hintergrund nicht mehr nachfragen</label>
             </div>
-            <div class="hint" style="margin-top:-6px; margin-bottom:16px;">
+            <div class="hint" style="margin-top:-6px; margin-bottom:16px;" data-i18n="design.transparentHint">
                 PNG und SVG behalten die Transparenz. Der Code ist dann nur auf hellem Untergrund lesbar.
             </div>
 
             <div class="checkbox-group">
                 <input type="checkbox" id="cornerEnabled" />
-                <label for="cornerEnabled">Ecken (Finder-Muster) anders einfärben</label>
+                <label for="cornerEnabled" data-i18n="design.corners">Ecken (Finder-Muster) anders einfärben</label>
             </div>
             <div class="color-group" id="cornerColorRow" style="display:none; margin-bottom:16px;">
                 <div>
-                    <label for="cornerColor" class="label-sm">Ecken-Farbe:</label>
+                    <label for="cornerColor" class="label-sm" data-i18n="design.cornerColor">Ecken-Farbe:</label>
                     <input type="color" id="cornerColor" value="#4c5fd7" />
                     <div class="color-value" id="cornerColorValue">#4C5FD7</div>
                 </div>
@@ -838,40 +887,40 @@
 
             <div class="checkbox-group" id="cornerSplitRow" style="display:none;">
                 <input type="checkbox" id="cornerSplit" />
-                <label for="cornerSplit">Ecken einzeln färben</label>
+                <label for="cornerSplit" data-i18n="design.cornerSplit">Ecken einzeln färben</label>
             </div>
             <div class="color-group" id="cornerSplitColors" style="display:none; margin-bottom:16px;">
                 <div>
-                    <label for="cornerTL" class="label-sm">oben links:</label>
+                    <label for="cornerTL" class="label-sm" data-i18n="design.tl">oben links:</label>
                     <input type="color" id="cornerTL" value="#4c5fd7" />
                 </div>
                 <div>
-                    <label for="cornerTR" class="label-sm">oben rechts:</label>
+                    <label for="cornerTR" class="label-sm" data-i18n="design.tr">oben rechts:</label>
                     <input type="color" id="cornerTR" value="#c0392b" />
                 </div>
                 <div>
-                    <label for="cornerBL" class="label-sm">unten links:</label>
+                    <label for="cornerBL" class="label-sm" data-i18n="design.bl">unten links:</label>
                     <input type="color" id="cornerBL" value="#1e7d32" />
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="moduleStyle">Modul-Stil:</label>
+                <label for="moduleStyle" data-i18n="design.module">Modul-Stil:</label>
                 <select id="moduleStyle">
-                    <option value="square">Quadrat (max. Lesbarkeit)</option>
-                    <option value="dots">Abgerundet (weicher)</option>
+                    <option value="square" data-i18n="module.square">Quadrat (max. Lesbarkeit)</option>
+                    <option value="dots" data-i18n="module.dots">Abgerundet (weicher)</option>
                 </select>
             </div>
 
             <div style="border-top:1px solid #eee; margin-top:8px; padding-top:18px;">
                 <div class="checkbox-group">
                     <input type="checkbox" id="persistSettings" />
-                    <label for="persistSettings">Einstellungen auf diesem Gerät speichern</label>
+                    <label for="persistSettings" data-i18n="design.persist">Einstellungen auf diesem Gerät speichern</label>
                 </div>
-                <div class="hint" style="margin-top:-6px; margin-bottom:12px;">
+                <div class="hint" style="margin-top:-6px; margin-bottom:12px;" data-i18n="design.persistHint">
                     Nur Design-Einstellungen (Farben, Größe, Fehlerkorrektur) – keine Inhalte, keine Passwörter.
                 </div>
-                <button type="button" class="secondary-btn" onclick="clearSettings()" style="font-size:14px; padding:12px;">
+                <button type="button" class="secondary-btn" onclick="clearSettings()" style="font-size:14px; padding:12px;" data-i18n="design.clear">
                     Gespeicherte Daten löschen
                 </button>
             </div>
@@ -880,19 +929,19 @@
         <!-- Tab: Logo -->
         <div id="logo" class="tab-content">
             <div class="form-group">
-                <label for="logoFile">Logo hochladen:</label>
+                <label for="logoFile" data-i18n="logo.upload">Logo hochladen:</label>
                 <input type="file" id="logoFile" accept="image/*" />
-                <div class="dropzone" id="logoDrop" role="button" tabindex="0" aria-label="Logo hierher ziehen oder auswählen">
-                    <strong>Logo hierher ziehen</strong>
-                    oder klicken zum Auswählen (PNG/JPG, max. 5 MB)
+                <div class="dropzone" id="logoDrop" role="button" tabindex="0" aria-label="Logo hierher ziehen oder auswählen" data-i18n-aria="logo.dropAria">
+                    <strong data-i18n="logo.dropTitle">Logo hierher ziehen</strong>
+                    <span data-i18n="logo.dropHint">oder klicken zum Auswählen (PNG/JPG, max. 5 MB)</span>
                 </div>
                 <div class="logo-preview" id="logoPreview">
-                    <button class="remove-logo" id="removeLogo" onclick="removeLogo()" title="Logo entfernen">✕</button>
+                    <button class="remove-logo" id="removeLogo" onclick="removeLogo()" title="Logo entfernen" data-i18n-title="logo.remove">✕</button>
                 </div>
             </div>
 
             <div class="form-group">
-                <label>Logo-Größe:</label>
+                <label for="logoSize" data-i18n="logo.size">Logo-Größe:</label>
                 <div class="slider-group">
                     <input type="range" id="logoSize" min="10" max="30" value="20" step="5" />
                     <span class="slider-value" id="logoSizeValue">20%</span>
@@ -901,60 +950,60 @@
 
             <div class="checkbox-group">
                 <input type="checkbox" id="logoBorder" checked />
-                <label for="logoBorder">Hintergrund hinter Logo (passend zur Hintergrundfarbe)</label>
+                <label for="logoBorder" data-i18n="logo.bg">Hintergrund hinter Logo (passend zur Hintergrundfarbe)</label>
             </div>
 
             <div class="checkbox-group">
                 <input type="checkbox" id="logoShadow" />
-                <label for="logoShadow">Schatten um Logo</label>
+                <label for="logoShadow" data-i18n="logo.shadow">Schatten um Logo</label>
             </div>
         </div>
 
         <!-- Tab: Stapel -->
         <div id="batch" class="tab-content">
             <div class="form-group">
-                <label for="batchInput">Eine Zeile = ein QR-Code</label>
-                <textarea id="batchInput" style="min-height:120px;" placeholder="https://beispiel.de;startseite&#10;https://beispiel.de/kontakt;kontakt&#10;https://beispiel.de/impressum"></textarea>
-                <div class="hint">Format: <code>Inhalt;dateiname</code> – der Dateiname ist optional.</div>
+                <label for="batchInput" data-i18n="batch.label">Eine Zeile = ein QR-Code</label>
+                <textarea id="batchInput" style="min-height:120px;" data-i18n-ph="batch.ph" placeholder="https://beispiel.de;startseite&#10;https://beispiel.de/kontakt;kontakt&#10;https://beispiel.de/impressum"></textarea>
+                <div class="hint" data-i18n-html="batch.hint">Format: <code>Inhalt;dateiname</code> – der Dateiname ist optional.</div>
             </div>
 
             <div class="form-group">
-                <label for="batchFile">… oder CSV-Datei wählen:</label>
+                <label for="batchFile" data-i18n="batch.file">… oder CSV-Datei wählen:</label>
                 <input type="file" id="batchFile" accept=".csv,.txt,text/csv,text/plain" />
             </div>
 
             <div class="checkbox-group">
                 <input type="checkbox" id="batchSvg" />
-                <label for="batchSvg">Zusätzlich SVG-Dateien erzeugen</label>
+                <label for="batchSvg" data-i18n="batch.svg">Zusätzlich SVG-Dateien erzeugen</label>
             </div>
 
-            <button type="button" class="secondary-btn" onclick="buildBatchZip()" id="batchBtn">📦 ZIP mit QR-Codes erstellen</button>
-            <div class="hint" id="batchInfo">Maximal 200 Zeilen pro Durchlauf. Es gelten die Design-Einstellungen.</div>
+            <button type="button" class="secondary-btn" onclick="buildBatchZip()" id="batchBtn" data-i18n="batch.btn">📦 ZIP mit QR-Codes erstellen</button>
+            <div class="hint" id="batchInfo" data-i18n="batch.info">Maximal 200 Zeilen pro Durchlauf. Es gelten die Design-Einstellungen.</div>
         </div>
 
-        <button onclick="generateQR()" id="generateBtn">✨ QR-Code generieren</button>
+        <button onclick="generateQR()" id="generateBtn" data-i18n="btn.generate">✨ QR-Code generieren</button>
 
         <div class="qr-result" id="result">
             <div id="qrBox">
-                <canvas id="qrCanvas" width="256" height="256" role="img" aria-label="Generierter QR-Code"></canvas>
+                <canvas id="qrCanvas" width="256" height="256" role="img" aria-label="Generierter QR-Code" data-i18n-aria="canvas.aria"></canvas>
             </div>
             <div class="hint" id="exportInfo" style="margin-top:8px;"></div>
             <div class="result-actions">
-                <button class="download-btn" onclick="downloadQR('png')">⬇️ PNG</button>
-                <button class="svg-btn" onclick="downloadQR('svg')">⬇️ SVG (verlustfrei)</button>
+                <button class="download-btn" onclick="downloadQR('png')" data-i18n="result.png">⬇️ PNG</button>
+                <button class="svg-btn" onclick="downloadQR('svg')" data-i18n="result.svg">⬇️ SVG (verlustfrei)</button>
             </div>
             <div class="result-actions" style="margin-top:8px;">
-                <button class="secondary-btn" onclick="runSelfTest()" id="selfTestBtn" style="font-size:14px; padding:12px;">🔍 Code testen</button>
-                <button class="secondary-btn" onclick="buildPrintSheet()" style="font-size:14px; padding:12px;">🖨️ Druckbogen (A4)</button>
+                <button class="secondary-btn" onclick="runSelfTest()" id="selfTestBtn" style="font-size:14px; padding:12px;" data-i18n="result.test">🔍 Code testen</button>
+                <button class="secondary-btn" onclick="buildPrintSheet()" style="font-size:14px; padding:12px;" data-i18n="result.print">🖨️ Druckbogen (A4)</button>
                 <span id="selfTestResult" style="align-self:center; font-size:13px; color:#666;"></span>
             </div>
             <div class="form-group" style="margin-top:12px; text-align:left;">
-                <label for="exportSize" class="label-sm">PNG-Auflösung beim Download:</label>
+                <label for="exportSize" class="label-sm" data-i18n="export.label">PNG-Auflösung beim Download:</label>
                 <select id="exportSize">
-                    <option value="512">512 px</option>
-                    <option value="1024" selected>1024 px</option>
-                    <option value="2048">2048 px (Druck)</option>
-                    <option value="preview">Wie Vorschau</option>
+                    <option value="512" data-i18n="export.512">512 px</option>
+                    <option value="1024" selected data-i18n="export.1024">1024 px</option>
+                    <option value="2048" data-i18n="export.2048">2048 px (Druck)</option>
+                    <option value="preview" data-i18n="export.preview">Wie Vorschau</option>
                 </select>
             </div>
             <div class="hint" id="resHint" style="display:none; margin-top:10px;"></div>
@@ -962,23 +1011,24 @@
         </div>
 
         <div class="info">
-            <strong>💡 Tipps:</strong>
+            <strong data-i18n="tips.title">💡 Tipps:</strong>
             <ul>
-                <li>Logo sollte quadratisch sein (z.B. 200x200px)</li>
-                <li>Hohe Fehlerkorrektur = Logo kann größer sein</li>
-                <li>vCard: mindestens Vor- oder Nachname angeben</li>
-                <li>SVG eignet sich für Druck, Plakate und beliebige Skalierung</li>
-                <li>Alle Daten bleiben lokal – nichts wird gesendet</li>
+                <li data-i18n="tips.1">Logo sollte quadratisch sein (z.B. 200x200px)</li>
+                <li data-i18n="tips.2">Hohe Fehlerkorrektur = Logo kann größer sein</li>
+                <li data-i18n="tips.3">vCard: mindestens Vor- oder Nachname angeben</li>
+                <li data-i18n="tips.4">SVG eignet sich für Druck, Plakate und beliebige Skalierung</li>
+                <li data-i18n="tips.5">Alle Daten bleiben lokal – nichts wird gesendet</li>
             </ul>
         </div>
 
         <footer class="site-footer">
-            <span class="sw-badge" id="swBadge" hidden>✓ offline verfügbar</span>
-            <div>Alle Berechnungen laufen in Ihrem Browser. Es werden keine Daten übertragen.</div>
+            <span class="sw-badge" id="swBadge" hidden data-i18n="footer.offline">✓ offline verfügbar</span>
+            <div data-i18n="footer.privacy">Alle Berechnungen laufen in Ihrem Browser. Es werden keine Daten übertragen.</div>
             <div style="margin-top:4px;">
-                <span id="appVersion">v2.1</span> · <span id="appDate">31.10.2026</span> ·
-                <a href="https://github.com/revucio24-web/qr-code-generator" target="_blank" rel="noopener noreferrer" style="color:#4c5fd7;">Quellcode</a> ·
-                <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer" style="color:#4c5fd7;">AGPL-3.0</a>
+                <span id="appVersion">v3.0</span> · <span id="appDate">01.11.2026</span> ·
+                <a href="https://github.com/revucio24-web/qr-code-generator" target="_blank" rel="noopener noreferrer" style="color:#4c5fd7;" data-i18n="footer.source">Quellcode</a> ·
+                <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer" style="color:#4c5fd7;" data-i18n="footer.license">AGPL-3.0</a> ·
+                <a href="datenschutz.html" style="color:#4c5fd7;" data-i18n="footer.privacyLink">Datenschutz</a>
             </div>
         </footer>
     </main>
@@ -987,6 +1037,7 @@
     <div id="printSheet" aria-hidden="true"></div>
 
     <!-- QR-Encoder: lokal eingebunden, keine externen Requests -->
+    <script src="i18n.js"></script>
     <script src="qrcode.min.js"></script>
 
     <script>
@@ -1065,11 +1116,11 @@
             }
             if (mail && !isValidEmail(mail)) {
                 showError('vcardError', true);
-                document.getElementById('vcardError').textContent = 'Bitte eine gültige E-Mail-Adresse eingeben';
+                document.getElementById('vcardError').textContent = t('vc.errorEmail');
                 return null;
             }
             showError('vcardError', false);
-            document.getElementById('vcardError').textContent = 'Bitte mindestens Vor- oder Nachname ausfüllen';
+            document.getElementById('vcardError').textContent = t('vc.errorName');
 
             const lines = [
                 'BEGIN:VCARD',
@@ -1095,7 +1146,7 @@
             switch (type) {
                 case 'text': {
                     const text = document.getElementById('text').value.trim();
-                    if (!text) { alert('Bitte gib einen Text oder eine URL ein!'); return null; }
+                    if (!text) { alert(t('alert.noText')); return null; }
                     return text;
                 }
                 case 'vcard':
@@ -1188,7 +1239,7 @@
                     if (!(typeof e === 'string' && e.indexOf('overflow') !== -1)) throw e;
                 }
             }
-            throw lastErr || new Error('Inhalt zu lang für einen QR-Code.');
+            throw lastErr || new Error('overflow (content too long)');
         }
 
         // Findet die drei 7x7-Finder-Muster
@@ -1436,16 +1487,11 @@
                 // Bugfix: muss die Download-Größe zeigen, nicht die Vorschau
                 const sel = document.getElementById('exportSize').value;
                 const dl = sel === 'preview' ? px + ' px' : parseInt(sel, 10) + ' px';
-                exportInfo.textContent =
-                    'Vorschau: ' + px + ' × ' + px + ' px · PNG-Download: ' + dl +
-                    ' · SVG ist beliebig skalierbar';
+                exportInfo.textContent = t('exportInfo', { px: px, dl: dl });
             }
 
             if (px > o.size) {
-                hint.textContent =
-                    'Hinweis: Für diese Datenmenge wurde die Auflösung auf ' + px +
-                    ' px erhöht (mindestens 2 px pro Modul), damit der Code scanbar bleibt. ' +
-                    'Für Druck bitte SVG verwenden.';
+                hint.textContent = t('resHint', { px: px });
                 hint.style.display = 'block';
             } else {
                 hint.style.display = 'none';
@@ -1509,9 +1555,8 @@
                 // Vorschau bleibt stehen, aber wir sagen es deutlich.
                 const box = document.getElementById('liveWarning');
                 if (box) {
-                    box.innerHTML = '<strong>Hinweis zur Lesbarkeit</strong><ul>' +
-                        '<li>Mit dieser Einstellung passt der Inhalt nicht mehr in den QR-Code – ' +
-                        'bitte Fehlerkorrektur reduzieren oder Inhalt kürzen.</li></ul>';
+                    box.innerHTML = '<strong>' + t('warn.title') + '</strong><ul><li>' +
+                        t('warn.overflow') + '</li></ul>';
                     box.classList.add('show');
                 }
             }
@@ -1525,13 +1570,13 @@
             const notes = [];
 
             if (o.transparent) {
-                notes.push('Transparenter Hintergrund: Der Code ist nur auf hellem Untergrund lesbar.');
+                notes.push(t('warn.transparent'));
             } else {
                 const r = contrastRatio(o.dark, o.light);
                 if (r < 3) {
-                    notes.push('Kontrast sehr gering (' + r.toFixed(1) + ':1) – der Code wird vermutlich nicht gelesen.');
+                    notes.push(t('warn.contrastVeryLow', { r: num(r) }));
                 } else if (r < 5) {
-                    notes.push('Kontrast niedrig (' + r.toFixed(1) + ':1) – empfohlen sind mindestens 5:1.');
+                    notes.push(t('warn.contrastLow', { r: num(r) }));
                 }
             }
 
@@ -1541,13 +1586,13 @@
                 let min = Infinity;
                 farben.forEach((c) => { min = Math.min(min, contrastRatio(c, ref)); });
                 if (min < 4.5) {
-                    notes.push('Ecken-Farbe zu schwach (' + min.toFixed(1) + ':1) – Finder-Muster brauchen mindestens 4,5:1.');
+                    notes.push(t('warn.cornerWeak', { r: num(min) }));
                 }
             }
 
             const ec = document.getElementById('errorCorrection').value;
             if (o.logo && ec !== 'H' && o.logoSize >= 0.15) {
-                notes.push('Logo bei niedriger Fehlerkorrektur – bitte „Sehr hoch (30 %)" wählen.');
+                notes.push(t('warn.logoEC'));
             }
 
             if (!notes.length) {
@@ -1556,7 +1601,7 @@
                 return;
             }
 
-            box.innerHTML = '<strong>Hinweis zur Lesbarkeit</strong><ul>' +
+            box.innerHTML = '<strong>' + t('warn.title') + '</strong><ul>' +
                 notes.map((n) => '<li>' + n + '</li>').join('') + '</ul>';
             box.classList.add('show');
         }
@@ -1566,7 +1611,7 @@
         function generateQR() {
             if (isGenerating) return;
             if (typeof qrcode !== 'function') {
-                alert('Fehler: QR-Bibliothek konnte nicht geladen werden (qrcode.js fehlt).');
+                alert(t('alert.libMissing'));
                 return;
             }
 
@@ -1577,31 +1622,24 @@
 
             if (!o.transparent) {
                 if (o.dark.toLowerCase() === o.light.toLowerCase()) {
-                    alert('⚠️ Dunkel- und Hellfarbe sind identisch!\nDer QR-Code wäre unsichtbar und nicht scannbar.');
+                    alert(t('alert.sameColors'));
                     return;
                 }
                 const ratio = contrastRatio(o.dark, o.light);
                 if (ratio < 3) {
-                    alert(
-                        '⚠️ Der Kontrast zwischen den Farben ist zu gering (Verhältnis ' +
-                        ratio.toFixed(1) + ':1).\n\n' +
-                        'Ein QR-Code braucht einen starken Unterschied zwischen dunkel und hell, ' +
-                        'sonst erkennen Kameras ihn nicht.'
-                    );
+                    alert(t('alert.contrastLow', { r: num(ratio) }));
                     switchTab('design', document.querySelectorAll('.tab')[1]);
                     return;
                 }
                 if (ratio < 5) {
-                    if (!confirm('Der Kontrast ist niedrig (' + ratio.toFixed(1) + ':1).\n' +
-                        'Empfohlen sind mindestens 5:1.\n\nTrotzdem fortfahren?')) {
+                    if (!confirm(t('alert.contrastConfirm', { r: num(ratio) }))) {
                         switchTab('design', document.querySelectorAll('.tab')[1]);
                         return;
                     }
                 }
             } else {
                 if (!document.getElementById('dontAskTransparent').checked) {
-                    if (!confirm('Transparenter Hintergrund:\nDer Code ist nur auf einem hellen Untergrund lesbar. ' +
-                        'Auf dunklen Fotos oder farbigen Flächen scannt er nicht.\n\nFortfahren?')) {
+                    if (!confirm(t('alert.transparentConfirm'))) {
                         return;
                     }
                 }
@@ -1615,9 +1653,7 @@
                 const min = Math.min.apply(null, verhaeltnisse);
 
                 if (min < 4.5) {
-                    if (!confirm('Die Ecken-Farbe hat nur ' + min.toFixed(1) + ':1 Kontrast zum Hintergrund.\n' +
-                        'Finder-Muster brauchen mindestens 4,5:1, sonst erkennen Scanner den Code evtl. nicht.\n\n' +
-                        'Trotzdem fortfahren?')) {
+                    if (!confirm(t('alert.cornerConfirm', { r: num(min) }))) {
                         switchTab('design', document.querySelectorAll('.tab')[1]);
                         return;
                     }
@@ -1627,8 +1663,7 @@
             const ecLevel = document.getElementById('errorCorrection').value;
 
             if (logoImage && ecLevel !== 'H' && o.logoSize >= 0.15) {
-                if (!confirm('⚠️ Achtung: Ein Logo braucht hohe Fehlerkorrektur, sonst scannt der QR-Code evtl. nicht!\n\n' +
-                    'Empfehlung: Fehlerkorrektur „Sehr hoch (30%)"\n\nTrotzdem mit „' + ecLevel + '-Stufe fortfahren?')) {
+                if (!confirm(t('alert.logoECConfirm', { ec: ecLevel }))) {
                     switchTab('design', document.querySelectorAll('.tab')[1]);
                     return;
                 }
@@ -1644,27 +1679,26 @@
                 for (const lower of ['Q', 'M', 'L']) {
                     try {
                         buildQR(text, lower);
-                        hinweis = '\n\nMit Fehlerkorrektur „' + lower + '" würde der Inhalt passen.';
+                        hinweis = t('alert.tooLongHint', { level: lower });
                         break;
                     } catch (e2) { /* weiter probieren */ }
                 }
-                alert('Der Inhalt ist zu lang für einen QR-Code.' + hinweis +
-                      '\n\nTipp: Felder kürzen oder Fehlerkorrektur reduzieren.');
+                alert(t('alert.tooLong', { hint: hinweis }));
                 return;
             }
 
             isGenerating = true;
             btn.disabled = true;
-            btn.textContent = '⏳ Generiere...';
+            btn.textContent = t('btn.generating');
 
             try {
                 drawToCanvas(qr, o);
                 lastSVG = buildSVG(qr, o);
             } catch (e) {
-                alert('Fehler beim Rendern: ' + (e && e.message ? e.message : e));
+                alert(t('alert.renderError', { msg: (e && e.message ? e.message : e) }));
                 isGenerating = false;
                 btn.disabled = false;
-                btn.textContent = '✨ QR-Code generieren';
+                btn.textContent = t('btn.generate');
                 return;
             }
 
@@ -1678,7 +1712,7 @@
 
             isGenerating = false;
             btn.disabled = false;
-            btn.textContent = '✨ QR-Code generieren';
+            btn.textContent = t('btn.generate');
 
             if (window.innerWidth <= 768) {
                 document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1690,7 +1724,7 @@
         function downloadQR(format) {
             const canvas = document.getElementById('qrCanvas');
             if (!canvas || !lastRender) {
-                alert('Bitte generiere zuerst einen QR-Code!');
+                alert(t('alert.needQR'));
                 return;
             }
 
@@ -1725,10 +1759,9 @@
             } catch (e) {
                 const msg = String(e && e.message ? e.message : e);
                 if (msg.indexOf('overflow') !== -1) {
-                    alert('Der Inhalt passt nicht zur gewählten Fehlerkorrektur.\n' +
-                          'Bitte Stufe reduzieren oder Inhalt kürzen.');
+                    alert(t('alert.exportOverflow'));
                 } else {
-                    alert('Export fehlgeschlagen: ' + msg);
+                    alert(t('alert.exportFailed', { msg: msg }));
                 }
                 return;
             }
@@ -1748,7 +1781,7 @@
                 s.src = src;
                 s.setAttribute('data-' + marker, '1');
                 s.onload = () => resolve();
-                s.onerror = () => reject(new Error('Datei konnte nicht geladen werden'));
+                s.onerror = () => reject(new Error('File could not be loaded'));
                 document.head.appendChild(s);
             });
         }
@@ -1758,19 +1791,19 @@
             const btn = document.getElementById('selfTestBtn');
 
             if (!lastRender) {
-                out.textContent = 'Bitte zuerst einen Code erzeugen.';
+                out.textContent = t('test.none');
                 out.style.color = '#666';
                 return;
             }
 
-            out.textContent = 'prüfe …';
+            out.textContent = t('test.checking');
             out.style.color = '#666';
             btn.disabled = true;
 
             try {
                 await loadScriptOnce('./jsqr.min.js', 'qrdecoder');
             } catch (e) {
-                out.textContent = '✗ Decoder nicht verfügbar (offline noch nicht geladen)';
+                out.textContent = t('test.noDecoder');
                 out.style.color = '#dc3545';
                 btn.disabled = false;
                 return;
@@ -1797,12 +1830,10 @@
                 const res = jsQR(data.data, comp.width, comp.height, { inversionAttempts: 'attemptBoth' });
                 const ok = !!res && res.data === lastRender.text;
 
-                out.textContent = ok
-                    ? '✓ lesbar (geprüft mit lokalem Decoder)'
-                    : '✗ nicht lesbar – bitte Kontrast/Farben prüfen';
+                out.textContent = ok ? t('test.ok') : t('test.fail');
                 out.style.color = ok ? '#1e7e34' : '#b02a37';
             } catch (e) {
-                out.textContent = '✗ Test fehlgeschlagen: ' + (e && e.message ? e.message : e);
+                out.textContent = t('test.error', { msg: (e && e.message ? e.message : e) });
                 out.style.color = '#dc3545';
             }
 
@@ -1824,7 +1855,7 @@
             const pw = document.getElementById('password');
             pw.disabled = istOffen;
             if (istOffen) pw.value = '';
-            pw.placeholder = istOffen ? 'nicht nötig (offenes Netz)' : 'geheim123';
+            pw.placeholder = istOffen ? t('wifi.pwNoPass') : t('wifi.pwPh');
         });
 
         document.getElementById('size').addEventListener('input', function() {
@@ -1861,15 +1892,15 @@
             if (!file) return false;
 
             if (!file.type.startsWith('image/')) {
-                alert('Bitte wähle eine Bilddatei!');
+                alert(t('alert.notImage'));
                 return false;
             }
             if (file.type === 'image/svg+xml') {
-                alert('SVG-Logos werden nicht unterstützt. Bitte PNG oder JPG verwenden.');
+                alert(t('alert.svgNotSupported'));
                 return false;
             }
             if (file.size > 5 * 1024 * 1024) {
-                alert('Logo darf max. 5MB groß sein!');
+                alert(t('alert.logoTooBig'));
                 return false;
             }
 
@@ -1884,7 +1915,7 @@
                     scheduleLivePreview();
                 };
                 img.onerror = function() {
-                    alert('Logo konnte nicht geladen werden!');
+                    alert(t('alert.logoLoadFailed'));
                     logoImage = null;
                 };
                 img.src = event.target.result;
@@ -1954,7 +1985,7 @@
             logoImage = null;
             document.getElementById('logoFile').value = '';
             document.getElementById('logoPreview').innerHTML =
-                '<button class="remove-logo" id="removeLogo" onclick="removeLogo()" title="Logo entfernen">✕</button>';
+                '<button class="remove-logo" id="removeLogo" onclick="removeLogo()" title="' + t('logo.remove') + '">✕</button>';
 
             // Bugfix: still neu zeichnen statt generateQR() aufzurufen –
             // sonst erscheint bei leerem Formular eine sinnlose Fehlermeldung
@@ -2093,7 +2124,7 @@
 
         async function buildPrintSheet() {
             if (!lastRender) {
-                alert('Bitte generiere zuerst einen QR-Code!');
+                alert(t('alert.needQR'));
                 return;
             }
 
@@ -2113,11 +2144,11 @@
 
                 const img = document.createElement('img');
                 img.src = url;
-                img.alt = 'QR-Code ' + i;
+                img.alt = t('print.alt', { i: i });
 
                 const cap = document.createElement('div');
                 cap.className = 'cap';
-                cap.textContent = typ + ' · ' + i;
+                cap.textContent = t('type.' + typ) + ' · ' + i;
 
                 cell.appendChild(img);
                 cell.appendChild(cap);
@@ -2180,10 +2211,10 @@
             const reader = new FileReader();
             reader.onload = function(event) {
                 document.getElementById('batchInput').value = String(event.target.result);
-                document.getElementById('batchInfo').textContent = 'Datei geladen: ' + file.name;
+                document.getElementById('batchInfo').textContent = t('batch.loaded', { name: file.name });
             };
             reader.onerror = function() {
-                document.getElementById('batchInfo').textContent = 'Datei konnte nicht gelesen werden.';
+                document.getElementById('batchInfo').textContent = t('batch.readError');
             };
             reader.readAsText(file, 'utf-8');
         });
@@ -2198,27 +2229,27 @@
                 .filter((l) => l.length > 0);
 
             if (lines.length === 0) {
-                info.textContent = 'Bitte mindestens eine Zeile eingeben.';
+                info.textContent = t('batch.empty');
                 return;
             }
             if (lines.length > 200) {
-                info.textContent = 'Maximal 200 Zeilen pro Durchlauf (aktuell ' + lines.length + ').';
+                info.textContent = t('batch.tooMany', { n: lines.length });
                 return;
             }
 
             try {
                 await loadScriptOnce('./jszip.min.js', 'jszip');
             } catch (e) {
-                info.textContent = '✗ ZIP-Bibliothek nicht verfügbar (offline noch nicht geladen).';
+                info.textContent = t('batch.noZip');
                 return;
             }
             if (typeof JSZip !== 'function') {
-                info.textContent = '✗ ZIP-Bibliothek fehlt.';
+                info.textContent = t('batch.noZipLib');
                 return;
             }
 
             btn.disabled = true;
-            info.textContent = 'erstelle ' + lines.length + ' Codes …';
+            info.textContent = t('batch.working', { n: lines.length });
 
             const zip = new JSZip();
             const o = readOptions();
@@ -2275,14 +2306,54 @@
                 a.remove();
                 setTimeout(() => URL.revokeObjectURL(url), 2000);
 
-                info.textContent = ok + ' Codes erstellt' +
-                    (fail ? ', ' + fail + ' übersprungen (Inhalt zu lang)' : '') + '.';
+                info.textContent = (ok === 1 ? t('batch.doneOne') : t('batch.done', { n: ok })) +
+                    (fail ? t('batch.skipped', { n: fail }) : '') + '.';
             } catch (e) {
-                info.textContent = '✗ Fehler: ' + (e && e.message ? e.message : e);
+                info.textContent = t('batch.error', { msg: (e && e.message ? e.message : e) });
             }
 
             btn.disabled = false;
         }
+
+        /* ================= Sprache & Direktaufruf ================= */
+
+        // Wird nach jedem Sprachwechsel aufgerufen: alles, was nicht fest im
+        // HTML steht, muss neu aufgebaut werden.
+        window.afterLangChange = function() {
+            // Preset-Buttons: Screenreader-Name aus dem übersetzten Titel
+            document.querySelectorAll('.preset').forEach((btn) => {
+                btn.setAttribute('aria-label', t('preset.ariaPrefix') + ' ' + btn.getAttribute('title'));
+            });
+
+            // Der Passwort-Platzhalter hängt an der Verschlüsselung
+            const enc = document.getElementById('encryption');
+            const pw = document.getElementById('password');
+            if (enc && pw) {
+                pw.placeholder = (enc.value === 'nopass') ? t('wifi.pwNoPass') : t('wifi.pwPh');
+            }
+
+            // Ein alter Selbsttest-Text wäre jetzt in der falschen Sprache
+            const st = document.getElementById('selfTestResult');
+            if (st) st.textContent = '';
+
+            // Vorschau-Infos und Warnbanner neu schreiben
+            if (lastRender) refreshPreview();
+        };
+
+        // ?type=vcard|wifi|email|phone|sms|text – für Verknüpfungen aus dem Store
+        (function applyTypeFromUrl() {
+            const wanted = new URLSearchParams(location.search).get('type');
+            if (!wanted) return;
+            const sel = document.getElementById('qrType');
+            if (!sel) return;
+            const exists = Array.prototype.some.call(sel.options, (o) => o.value === wanted);
+            if (!exists) return;
+            sel.value = wanted;
+            sel.dispatchEvent(new Event('change'));
+        })();
+
+        // Sprache anwenden – erst hier, damit alle Elemente bereits existieren
+        initLang();
 
         /* ================= Service Worker (offline) ================= */
 
