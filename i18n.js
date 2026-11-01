@@ -441,6 +441,14 @@ function t(key, vars) {
     return text;
 }
 
+// Kommt ein Schlüssel in keiner Tabelle vor, ist die Sprachdatei im Cache
+// älter als das HTML. Dann lieber den vorhandenen Text stehen lassen,
+// statt "footer.contact" auf dem Bildschirm anzuzeigen.
+function missingKey(key) {
+    const table = I18N[LANG] || I18N.de;
+    return table[key] === undefined && I18N.de[key] === undefined;
+}
+
 // Zahl mit passendem Dezimaltrennzeichen (DE: 1,2 · EN: 1.2)
 function num(value, digits) {
     const n = Number(value).toFixed(digits === undefined ? 1 : digits);
@@ -455,19 +463,29 @@ function applyLangToDom() {
     if (meta) meta.setAttribute('content', t('app.metaDesc'));
 
     document.querySelectorAll('[data-i18n]').forEach((el) => {
-        el.textContent = t(el.getAttribute('data-i18n'));
+        const key = el.getAttribute('data-i18n');
+        if (missingKey(key)) return;
+        el.textContent = t(key);
     });
     document.querySelectorAll('[data-i18n-html]').forEach((el) => {
-        el.innerHTML = t(el.getAttribute('data-i18n-html'));
+        const key = el.getAttribute('data-i18n-html');
+        if (missingKey(key)) return;
+        el.innerHTML = t(key);
     });
     document.querySelectorAll('[data-i18n-ph]').forEach((el) => {
-        el.setAttribute('placeholder', t(el.getAttribute('data-i18n-ph')));
+        const key = el.getAttribute('data-i18n-ph');
+        if (missingKey(key)) return;
+        el.setAttribute('placeholder', t(key));
     });
     document.querySelectorAll('[data-i18n-title]').forEach((el) => {
-        el.setAttribute('title', t(el.getAttribute('data-i18n-title')));
+        const key = el.getAttribute('data-i18n-title');
+        if (missingKey(key)) return;
+        el.setAttribute('title', t(key));
     });
     document.querySelectorAll('[data-i18n-aria]').forEach((el) => {
-        el.setAttribute('aria-label', t(el.getAttribute('data-i18n-aria')));
+        const key = el.getAttribute('data-i18n-aria');
+        if (missingKey(key)) return;
+        el.setAttribute('aria-label', t(key));
     });
 }
 
