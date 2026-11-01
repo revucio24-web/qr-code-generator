@@ -8,6 +8,7 @@
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
+  "launch_handler": { "client_mode": "focus-existing" },
   "orientation": "any",
   "background_color": "#ffffff",
   "theme_color": "#667eea",
@@ -67,6 +68,20 @@
       "type": "image/png",
       "form_factor": "wide",
       "label": "Stapelverarbeitung als ZIP"
+    },
+    {
+      "src": "screenshots/mobile-result.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "QR-Code auf dem Handy"
+    },
+    {
+      "src": "screenshots/mobile-start.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Revu QR auf dem Handy"
     }
   ],
   "shortcuts": [
